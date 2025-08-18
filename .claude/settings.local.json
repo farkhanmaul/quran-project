@@ -9,7 +9,10 @@
       "Bash(npx @angular/cli@17 new:*)",
       "Bash(mkdir:*)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(rm:*)",
+      "Bash(true)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,118 @@
+{
+  "name": "Quran App - Digital Quran Reader",
+  "short_name": "Quran App",
+  "description": "A modern, responsive web application for reading and studying the Holy Quran",
+  "start_url": "/quran-project/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "scope": "/quran-project/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "books", "lifestyle"],
+  "icons": [
+    {
+      "src": "/quran-project/assets/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/quran-project/assets/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/quran-project/assets/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/quran-project/assets/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/quran-project/assets/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/quran-project/assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/quran-project/assets/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/quran-project/assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/quran-project/assets/screenshots/desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard view with prayer times and Ayah of the day"
+    },
+    {
+      "src": "/quran-project/assets/screenshots/mobile-1.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile dashboard view"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Read Quran",
+      "short_name": "Read",
+      "description": "Start reading the Quran",
+      "url": "/quran-project/quran",
+      "icons": [{ "src": "/quran-project/assets/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Prayer Times",
+      "short_name": "Prayer",
+      "description": "View today's prayer times",
+      "url": "/quran-project/prayer-times",
+      "icons": [{ "src": "/quran-project/assets/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Qibla",
+      "short_name": "Qibla",
+      "description": "Find Qibla direction",
+      "url": "/quran-project/qibla",
+      "icons": [{ "src": "/quran-project/assets/icons/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "share_target": {
+    "action": "/quran-project/share",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+quran",
+      "url": "/quran-project/quran/%s"
+    }
+  ]
+}

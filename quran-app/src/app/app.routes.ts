@@ -1,26 +1,29 @@
 import { Routes } from '@angular/router';
 
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { SurahListComponent } from './components/quran/surah-list/surah-list.component';
+
 export const routes: Routes = [
-  // TODO: Add route configurations
+  // Home/Dashboard route
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: 'dashboard', component: DashboardComponent },
 
-  // TODO: Home/Dashboard route
-  // { path: '', component: DashboardComponent },
-
-  // TODO: Quran routes
-  // { path: 'quran', component: SurahListComponent },
+  // Quran routes
+  { path: 'quran', component: SurahListComponent },
   // { path: 'quran/:surahNumber', component: QuranReaderComponent },
   // { path: 'quran/:surahNumber/:ayahNumber', component: QuranReaderComponent },
 
-  // TODO: Prayer routes
+  // TODO: Uncomment routes when components are implemented
+  // Prayer routes
   // { path: 'prayer-times', component: PrayerTimesComponent },
 
-  // TODO: Qibla route
+  // Qibla route
   // { path: 'qibla', component: QiblaCompassComponent },
 
-  // TODO: Bookmarks route
+  // Bookmarks route
   // { path: 'bookmarks', component: BookmarkListComponent },
 
-  // TODO: Settings route
+  // Settings route
   // { path: 'settings', component: AppSettingsComponent },
 
   // TODO: Search route
@@ -29,6 +32,6 @@ export const routes: Routes = [
   // TODO: About route
   // { path: 'about', component: AboutComponent },
 
-  // TODO: Wildcard route for 404
-  // { path: '**', redirectTo: '' }
+  // Wildcard route for 404
+  { path: '**', redirectTo: '/dashboard' }
 ];

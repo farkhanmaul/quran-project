@@ -1,20 +1,48 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-header',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  // TODO: Add header component logic
+  @Output() sidebarToggle = new EventEmitter<void>();
+  
+  searchQuery: string = '';
+  isDarkMode: boolean = false;
+  currentLanguage: string = 'en';
+  
+  languages = [
+    { code: 'en', name: 'English' },
+    { code: 'ar', name: 'العربية' },
+    { code: 'id', name: 'Bahasa Indonesia' }
+  ];
 
-  // TODO: Implement navigation menu toggle
+  toggleSidebar() {
+    this.sidebarToggle.emit();
+  }
 
-  // TODO: Add search functionality
+  onSearch() {
+    if (this.searchQuery.trim()) {
+      // TODO: Implement search functionality
+      console.log('Searching for:', this.searchQuery);
+    }
+  }
 
-  // TODO: Add language switcher
+  toggleTheme() {
+    this.isDarkMode = !this.isDarkMode;
+    // TODO: Implement theme switching
+    document.body.classList.toggle('dark-theme', this.isDarkMode);
+  }
 
-  // TODO: Add theme switcher (light/dark mode)
-
-  // TODO: Add user preferences menu
+  changeLanguage(langCode: string) {
+    this.currentLanguage = langCode;
+    // TODO: Implement language switching
+    console.log('Language changed to:', langCode);
+  }
 }
