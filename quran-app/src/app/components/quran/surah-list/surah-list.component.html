@@ -1,0 +1,74 @@
+<div class="surah-list-container">
+  
+  <!-- Header -->
+  <div class="header-section">
+    <h1>Quran Surahs</h1>
+    <p>Choose a surah to begin reading</p>
+  </div>
+  
+  <!-- Search and Filters -->
+  <div class="controls-section">
+    <div class="search-bar">
+      <input 
+        type="text" 
+        placeholder="Search surahs..." 
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+        class="search-input">
+      <span class="search-icon">🔍</span>
+    </div>
+    
+    <div class="filter-section">
+      <select [(ngModel)]="selectedFilter" (change)="onFilterChange()" class="filter-select">
+        <option value="all">All Surahs</option>
+        <option value="meccan">Meccan</option>
+        <option value="medinan">Medinan</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading surahs...</p>
+  </div>
+  
+  <!-- Surah List -->
+  <div *ngIf="!isLoading" class="surahs-grid">
+    <div 
+      *ngFor="let surah of filteredSurahs" 
+      class="surah-card"
+      [routerLink]="['/quran', surah.number]">
+      
+      <div class="surah-number">{{ surah.number }}</div>
+      
+      <div class="surah-content">
+        <div class="surah-names">
+          <h3 class="arabic-name" dir="rtl">{{ surah.name }}</h3>
+          <h4 class="english-name">{{ surah.englishName }}</h4>
+          <p class="translation">{{ surah.englishNameTranslation }}</p>
+        </div>
+        
+        <div class="surah-info">
+          <span class="ayah-count">{{ surah.numberOfAyahs }} verses</span>
+          <span class="revelation-type" [class]="surah.revelationType.toLowerCase()">
+            {{ surah.revelationType }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="action-icon">▶</div>
+    </div>
+  </div>
+  
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredSurahs.length === 0" class="empty-state">
+    <div class="empty-icon">📖</div>
+    <h3>No surahs found</h3>
+    <p>Try adjusting your search or filter criteria</p>
+    <button (click)="searchQuery = ''; selectedFilter = 'all'; onFilterChange()" class="reset-btn">
+      Clear Filters
+    </button>
+  </div>
+  
+</div>
