@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git remote add origin https://github.com/farkhanmaul/quran-project.git)",
+      "Bash(git init)",
+      "Bash(git config:*)",
+      "Bash(git clone:*)",
+      "Bash(npx @angular/cli@latest new:*)",
+      "Bash(npx @angular/cli@17 new:*)",
+      "Bash(mkdir:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
