@@ -1,3 +1,6 @@
+# Claude Code settings (should not be committed)
+.claude/
+
 # API Documentation (for reference only)
 docs/api-reference/
 
