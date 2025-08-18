@@ -34,13 +34,17 @@ jobs:
         working-directory: ./quran-app
         run: npm run build:gh-pages
       
+      - name: List build output
+        working-directory: ./quran-app
+        run: ls -la dist/quran-app/
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './quran-app/dist/quran-app'
+          path: './quran-app/dist/quran-app/browser'
 
   deploy:
     environment:
