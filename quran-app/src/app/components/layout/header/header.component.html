@@ -2,7 +2,7 @@
   
   <!-- Left section: Logo and menu toggle -->
   <div class="header-left">
-    <button class="menu-toggle" (click)="toggleSidebar()">
+    <button class="menu-toggle" (click)="toggleSidebar()" aria-label="Toggle sidebar">
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
@@ -22,8 +22,11 @@
         placeholder="Search Quran..." 
         [(ngModel)]="searchQuery"
         (keyup.enter)="onSearch()"
-        class="search-input">
-      <button class="search-btn" (click)="onSearch()">🔍</button>
+        class="search-input"
+        aria-label="Search">
+      <button class="search-btn" (click)="onSearch()" aria-label="Search">
+        <i class="search-icon">🔍</i>
+      </button>
     </div>
   </div>
   
@@ -31,29 +34,91 @@
   <div class="header-right">
     
     <!-- Theme toggle -->
-    <button class="icon-btn theme-toggle" (click)="toggleTheme()" 
-            [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
-      {{ isDarkMode ? '☀️' : '🌙' }}
+    <button class="icon-btn theme-toggle" 
+            (click)="toggleTheme()" 
+            [class.active]="isDarkMode"
+            [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+            [attr.aria-label]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+      <i class="theme-icon">{{ isDarkMode ? '☀️' : '🌙' }}</i>
     </button>
     
     <!-- Language selector -->
-    <div class="language-selector">
-      <button class="icon-btn">🌐</button>
-      <div class="language-dropdown">
+    <div class="language-selector" [class.open]="isMenuOpen">
+      <button class="icon-btn language-btn" 
+              (click)="toggleMenu()" 
+              [attr.aria-expanded]="isMenuOpen"
+              aria-label="Select language">
+        <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
+        <span class="language-code">{{ currentLanguage.toUpperCase() }}</span>
+        <i class="dropdown-arrow">{{ isMenuOpen ? '▲' : '▼' }}</i>
+      </button>
+      
+      <div class="language-dropdown" [class.show]="isMenuOpen">
         <button 
           *ngFor="let lang of languages" 
           (click)="changeLanguage(lang.code)"
-          [class.active]="currentLanguage === lang.code">
-          {{ lang.name }}
+          [class.active]="currentLanguage === lang.code"
+          class="language-option">
+          <span class="flag">{{ lang.flag }}</span>
+          <span class="name">{{ lang.name }}</span>
+          <span class="code">{{ lang.code.toUpperCase() }}</span>
         </button>
       </div>
     </div>
     
     <!-- Settings -->
-    <button class="icon-btn" routerLink="/settings" title="Settings">
-      ⚙️
+    <button class="icon-btn settings-btn" 
+            routerLink="/settings" 
+            title="Settings"
+            aria-label="Settings">
+      <i class="settings-icon">⚙️</i>
     </button>
     
+    <!-- Mobile menu toggle -->
+    <button class="icon-btn mobile-menu-toggle" 
+            (click)="toggleMenu()" 
+            [class.active]="isMenuOpen"
+            aria-label="Toggle mobile menu">
+      <i class="mobile-menu-icon">{{ isMenuOpen ? '✕' : '☰' }}</i>
+    </button>
+    
+  </div>
+  
+  <!-- Mobile dropdown menu -->
+  <div class="mobile-menu" [class.show]="isMenuOpen">
+    <div class="mobile-menu-item">
+      <button class="mobile-theme-toggle" 
+              (click)="toggleTheme(); toggleMenu()" 
+              [class.active]="isDarkMode">
+        <i>{{ isDarkMode ? '☀️' : '🌙' }}</i>
+        <span>{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
+      </button>
+    </div>
+    
+    <div class="mobile-menu-item">
+      <div class="mobile-language-section">
+        <h4>Language</h4>
+        <div class="mobile-language-options">
+          <button 
+            *ngFor="let lang of languages" 
+            (click)="changeLanguage(lang.code); toggleMenu()"
+            [class.active]="currentLanguage === lang.code"
+            class="mobile-language-option">
+            <span class="flag">{{ lang.flag }}</span>
+            <span class="name">{{ lang.name }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mobile-menu-item">
+      <button class="mobile-settings" 
+              routerLink="/settings" 
+              (click)="toggleMenu()">
+        <i>⚙️</i>
+        <span>Settings</span>
+      </button>
+    </div>
   </div>
   
 </header>

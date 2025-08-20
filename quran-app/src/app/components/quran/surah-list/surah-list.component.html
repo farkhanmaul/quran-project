@@ -38,7 +38,7 @@
     <div 
       *ngFor="let surah of filteredSurahs" 
       class="surah-card"
-      [routerLink]="['/quran', surah.number]">
+      [routerLink]="['/quran/surah', surah.number]">
       
       <div class="surah-number">{{ surah.number }}</div>
       

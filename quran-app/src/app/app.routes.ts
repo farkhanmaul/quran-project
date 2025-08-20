@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { SurahListComponent } from './components/quran/surah-list/surah-list.component';
+import { QuranReaderComponent } from './components/quran/quran-reader/quran-reader.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 export const routes: Routes = [
   // Home/Dashboard route
@@ -10,8 +12,10 @@ export const routes: Routes = [
 
   // Quran routes
   { path: 'quran', component: SurahListComponent },
-  // { path: 'quran/:surahNumber', component: QuranReaderComponent },
-  // { path: 'quran/:surahNumber/:ayahNumber', component: QuranReaderComponent },
+  { path: 'quran/surah/:id', component: QuranReaderComponent },
+
+  // Settings route
+  { path: 'settings', component: SettingsComponent },
 
   // TODO: Uncomment routes when components are implemented
   // Prayer routes
@@ -22,9 +26,6 @@ export const routes: Routes = [
 
   // Bookmarks route
   // { path: 'bookmarks', component: BookmarkListComponent },
-
-  // Settings route
-  // { path: 'settings', component: AppSettingsComponent },
 
   // TODO: Search route
   // { path: 'search', component: SearchComponent },

@@ -1,1 +1,459 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Styles */
+
+// Import Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap');
+
+// CSS Variables for Light Theme (Default)
+:root {
+  // Colors
+  --primary-color: #667eea;
+  --secondary-color: #764ba2;
+  --accent-color: #f093fb;
+  
+  // Backgrounds
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  // Card backgrounds
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-bg-secondary: #f8f9ff;
+  --card-bg-hover: #f0f4ff;
+  
+  // Text colors
+  --text-primary: #2c3e50;
+  --text-secondary: #718096;
+  --text-tertiary: #a0aec0;
+  --text-inverse: #ffffff;
+  
+  // Border and divider colors
+  --border-color: #e0e0e0;
+  --divider-color: #f0f0f0;
+  
+  // Interactive elements
+  --hover-bg: #f5f5f5;
+  --active-bg: #e9ecef;
+  --focus-color: #667eea;
+  
+  // Shadows
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  
+  // Header specific
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --search-bg: #f8f9fa;
+  
+  // Font sizes
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.875rem;
+  --font-4xl: 2.25rem;
+  
+  // Arabic text
+  --arabic-font-size: 1.8rem;
+  
+  // Spacing
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  
+  // Border radius
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+  
+  // Transitions
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.3s ease-in-out;
+  --transition-slow: 0.5s ease-in-out;
+}
+
+// Dark Theme Variables
+.dark-mode {
+  // Backgrounds
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #3a3a3a;
+  --bg-gradient: linear-gradient(135deg, #4c63d2 0%, #5a4b8c 100%);
+  
+  // Card backgrounds
+  --card-bg: rgba(30, 30, 30, 0.95);
+  --card-bg-secondary: #2a2a2a;
+  --card-bg-hover: #333333;
+  
+  // Text colors
+  --text-primary: #e2e8f0;
+  --text-secondary: #a0aec0;
+  --text-tertiary: #718096;
+  --text-inverse: #1a1a1a;
+  
+  // Border and divider colors
+  --border-color: #4a5568;
+  --divider-color: #3a3a3a;
+  
+  // Interactive elements
+  --hover-bg: #333333;
+  --active-bg: #4a5568;
+  
+  // Shadows (darker for dark theme)
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
+  
+  // Header specific
+  --header-bg: rgba(26, 26, 26, 0.95);
+  --search-bg: #333333;
+}
+
+// RTL Language Support
+[dir="rtl"] {
+  text-align: right;
+  
+  * {
+    direction: rtl;
+  }
+  
+  // Reverse margins and padding for RTL
+  .me-auto { margin-inline-end: 0 !important; margin-inline-start: auto !important; }
+  .ms-auto { margin-inline-start: 0 !important; margin-inline-end: auto !important; }
+  .pe-3 { padding-inline-end: 1rem !important; }
+  .ps-3 { padding-inline-start: 1rem !important; }
+}
+
+// Reset and Base Styles
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  min-height: 100vh;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+  overflow-x: hidden;
+  
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: var(--radius-full);
+    
+    &:hover {
+      background: var(--text-secondary);
+    }
+  }
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+h1 { font-size: var(--font-4xl); }
+h2 { font-size: var(--font-3xl); }
+h3 { font-size: var(--font-2xl); }
+h4 { font-size: var(--font-xl); }
+h5 { font-size: var(--font-lg); }
+h6 { font-size: var(--font-base); }
+
+p {
+  margin-bottom: var(--space-md);
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  
+  &:hover {
+    color: var(--secondary-color);
+  }
+}
+
+// Arabic Text Styling
+.arabic-text {
+  font-family: 'Amiri', serif;
+  font-size: var(--arabic-font-size);
+  line-height: 2.2;
+  direction: rtl;
+  text-align: right;
+  font-weight: 500;
+  word-spacing: 0.25rem;
+  color: var(--text-primary);
+}
+
+// Font Size Classes
+.font-small .arabic-text { --arabic-font-size: 1.4rem; }
+.font-medium .arabic-text { --arabic-font-size: 1.8rem; }
+.font-large .arabic-text { --arabic-font-size: 2.2rem; }
+.font-extra-large .arabic-text { --arabic-font-size: 2.6rem; }
+
+// Arabic Font Classes
+.arabic-uthmanic .arabic-text {
+  font-family: 'Amiri', serif;
+}
+
+.arabic-indopak .arabic-text {
+  font-family: 'Noto Nastaliq Urdu', serif;
+}
+
+// Button Base Styles
+button {
+  font-family: inherit;
+  font-size: var(--font-base);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  &:focus {
+    outline: 2px solid var(--focus-color);
+    outline-offset: 2px;
+  }
+}
+
+// Input Base Styles
+input, textarea, select {
+  font-family: inherit;
+  font-size: var(--font-base);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  
+  &:focus {
+    outline: none;
+    border-color: var(--focus-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+  
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+}
+
+// Card Component
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-xl);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  backdrop-filter: blur(10px);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+// Gradient Backgrounds
+.bg-gradient {
+  background: var(--bg-gradient);
+}
+
+.bg-gradient-card {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+}
+
+// Utility Classes
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.hidden { display: none !important; }
+.visible { visibility: visible; }
+.invisible { visibility: hidden; }
+
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+
+.pointer { cursor: pointer; }
+.not-allowed { cursor: not-allowed; }
+
+// Spacing Utilities
+.m-0 { margin: 0 !important; }
+.mt-1 { margin-top: var(--space-xs) !important; }
+.mt-2 { margin-top: var(--space-sm) !important; }
+.mt-3 { margin-top: var(--space-md) !important; }
+.mt-4 { margin-top: var(--space-lg) !important; }
+.mt-5 { margin-top: var(--space-xl) !important; }
+
+.mb-1 { margin-bottom: var(--space-xs) !important; }
+.mb-2 { margin-bottom: var(--space-sm) !important; }
+.mb-3 { margin-bottom: var(--space-md) !important; }
+.mb-4 { margin-bottom: var(--space-lg) !important; }
+.mb-5 { margin-bottom: var(--space-xl) !important; }
+
+.p-0 { padding: 0 !important; }
+.p-1 { padding: var(--space-xs) !important; }
+.p-2 { padding: var(--space-sm) !important; }
+.p-3 { padding: var(--space-md) !important; }
+.p-4 { padding: var(--space-lg) !important; }
+.p-5 { padding: var(--space-xl) !important; }
+
+// Loading Spinner
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+// Responsive Design
+@media (max-width: 1200px) {
+  :root {
+    --font-4xl: 2rem;
+    --font-3xl: 1.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --font-4xl: 1.75rem;
+    --font-3xl: 1.5rem;
+    --font-2xl: 1.25rem;
+    --space-xl: 1.5rem;
+    --space-2xl: 2rem;
+  }
+  
+  body {
+    font-size: var(--font-sm);
+  }
+  
+  .card {
+    padding: var(--space-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --font-4xl: 1.5rem;
+    --font-3xl: 1.25rem;
+    --space-lg: 1rem;
+    --space-xl: 1.25rem;
+  }
+  
+  .card {
+    padding: var(--space-md);
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  :root {
+    --border-color: #000000;
+    --text-secondary: #000000;
+  }
+  
+  .dark-mode {
+    --border-color: #ffffff;
+    --text-secondary: #ffffff;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Print styles
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .arabic-text {
+    font-size: 16pt !important;
+    line-height: 1.8 !important;
+  }
+  
+  .card {
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+  }
+}
+
+// Focus styles for accessibility
+:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+// Selection styles
+::selection {
+  background: rgba(102, 126, 234, 0.2);
+  color: var(--text-primary);
+}
+
+::-moz-selection {
+  background: rgba(102, 126, 234, 0.2);
+  color: var(--text-primary);
+}
+
+// Smooth transitions for theme changes
+* {
+  transition: background-color var(--transition-normal), 
+              color var(--transition-normal), 
+              border-color var(--transition-normal);
+}
