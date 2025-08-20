@@ -22,7 +22,7 @@
         <div class="theme-options">
           <button 
             *ngFor="let theme of themes"
-            (click)="onThemeChange(theme.value as any)"
+            (click)="onThemeChange(theme.value)"
             [class.active]="settings.theme === theme.value"
             class="theme-option">
             <i class="theme-icon">{{ theme.icon }}</i>
@@ -66,7 +66,7 @@
         <div class="font-size-options">
           <button 
             *ngFor="let size of fontSizes"
-            (click)="onFontSizeChange(size.value as any)"
+            (click)="onFontSizeChange(size.value)"
             [class.active]="settings.fontSize === size.value"
             class="font-size-option">
             <span class="size-name">{{ size.name }}</span>
@@ -84,7 +84,7 @@
         <div class="arabic-font-options">
           <button 
             *ngFor="let font of arabicFonts"
-            (click)="onArabicFontChange(font.value as any)"
+            (click)="onArabicFontChange(font.value)"
             [class.active]="settings.arabicFont === font.value"
             class="arabic-font-option">
             <div class="font-info">

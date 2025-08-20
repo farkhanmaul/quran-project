@@ -147,8 +147,8 @@ export class SettingsComponent implements OnInit {
     return sizeMap[this.settings.fontSize];
   }
 
-  onThemeChange(theme: 'light' | 'dark' | 'auto') {
-    this.settings.theme = theme;
+  onThemeChange(theme: string) {
+    this.settings.theme = theme as 'light' | 'dark' | 'auto';
     this.saveSettings();
   }
 
@@ -157,13 +157,13 @@ export class SettingsComponent implements OnInit {
     this.saveSettings();
   }
 
-  onFontSizeChange(fontSize: 'small' | 'medium' | 'large' | 'extra-large') {
-    this.settings.fontSize = fontSize;
+  onFontSizeChange(fontSize: string) {
+    this.settings.fontSize = fontSize as 'small' | 'medium' | 'large' | 'extra-large';
     this.saveSettings();
   }
 
-  onArabicFontChange(font: 'uthmanic' | 'indopak') {
-    this.settings.arabicFont = font;
+  onArabicFontChange(font: string) {
+    this.settings.arabicFont = font as 'uthmanic' | 'indopak';
     this.saveSettings();
   }
 
