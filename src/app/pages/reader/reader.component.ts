@@ -4,13 +4,13 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 interface Verse {
+  chapter: number;
   verse: number;
   text: string;
 }
 
-interface SurahData {
-  chapter: number;
-  verses: Verse[];
+interface ApiResponse {
+  chapter: Verse[];
 }
 
 @Component({
@@ -31,14 +31,14 @@ interface SurahData {
         <button (click)="loadSurah()" class="retry-btn">Retry</button>
       </div>
       
-      <div *ngIf="surahData && !loading" class="surah-content">
-        <div *ngFor="let verse of surahData.verses" class="verse">
+      <div *ngIf="verses && verses.length > 0 && !loading" class="surah-content">
+        <div *ngFor="let verse of verses" class="verse">
           <div class="verse-number">{{ verse.verse }}</div>
           <div class="verse-text">{{ verse.text }}</div>
         </div>
       </div>
       
-      <div *ngIf="surahData && !loading" class="navigation">
+      <div *ngIf="verses && verses.length > 0 && !loading" class="navigation">
         <button 
           *ngIf="surahNumber > 1"
           (click)="previousSurah()" 
@@ -191,7 +191,7 @@ interface SurahData {
 })
 export class ReaderComponent implements OnInit {
   surahNumber: number = 1;
-  surahData: SurahData | null = null;
+  verses: Verse[] = [];
   loading = false;
   error = '';
 
@@ -211,14 +211,14 @@ export class ReaderComponent implements OnInit {
   loadSurah() {
     this.loading = true;
     this.error = '';
-    this.surahData = null;
+    this.verses = [];
 
     // Using the working API endpoint
     const apiUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ara-quranacademy/${this.surahNumber}.json`;
     
-    this.http.get<SurahData>(apiUrl).subscribe({
+    this.http.get<ApiResponse>(apiUrl).subscribe({
       next: (data) => {
-        this.surahData = data;
+        this.verses = data.chapter || [];
         this.loading = false;
       },
       error: (err) => {
