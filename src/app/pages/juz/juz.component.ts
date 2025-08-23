@@ -14,6 +14,16 @@ interface JuzData {
   [key: string]: JuzVerse[];
 }
 
+interface TranslationVerse {
+  chapter: number;
+  verse: number;
+  text: string;
+}
+
+interface TranslationResponse {
+  quran: TranslationVerse[];
+}
+
 @Component({
   selector: 'app-juz',
   standalone: true,
@@ -22,13 +32,6 @@ interface JuzData {
     <div class="container">
       <header class="header">
         <h1>Juz {{ juzNumber }}</h1>
-        <div class="language-switcher">
-          <select [(ngModel)]="selectedLanguage" (change)="switchLanguage()" class="lang-select">
-            <option value="ara-quranacademy">Arabic</option>
-            <option value="ind-indonesian">Indonesian</option>
-            <option value="eng-sahih">English</option>
-          </select>
-        </div>
       </header>
       
       <div class="navigation">
@@ -47,8 +50,9 @@ interface JuzData {
           <div class="verse-info">
             <span class="chapter-verse">{{ verse.chapter }}:{{ verse.verse }}</span>
           </div>
-          <div class="verse-text" [class.rtl]="selectedLanguage.startsWith('ara')">
-            {{ verse.text }}
+          <div class="verse-content">
+            <div class="verse-text arabic" [style.font-size.px]="fontSize + 6">{{ verse.text }}</div>
+            <div *ngIf="translations[i]" class="verse-text indonesian" [style.font-size.px]="fontSize">{{ translations[i].text }}</div>
           </div>
         </div>
       </div>
