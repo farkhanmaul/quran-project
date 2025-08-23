@@ -27,16 +27,13 @@ jobs:
           node-version: '18'
       
       - name: Install dependencies
-        working-directory: ./quran-app
         run: npm install
       
       - name: Build
-        working-directory: ./quran-app
         run: npm run build:gh-pages
       
       - name: List build output
-        working-directory: ./quran-app
-        run: ls -la dist/quran-app/
+        run: ls -la dist/
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -44,7 +41,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './quran-app/dist/quran-app/browser'
+          path: './dist/quran-project/browser'
 
   deploy:
     environment:
