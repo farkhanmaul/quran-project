@@ -64,36 +64,75 @@ interface JuzData {
   `,
   styles: [`
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 2rem;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
     }
     
     .header {
-      text-align: center;
       margin-bottom: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .header-top {
+      text-align: center;
+      margin-bottom: 1rem;
     }
     
     .header h1 {
       font-size: 2.5rem;
       margin: 0;
-      color: #333;
+      color: white;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     }
     
-    .language-switcher .lang-select {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1rem;
-      background: white;
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .font-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.5rem;
+      border-radius: 25px;
+    }
+    
+    .font-btn {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      border: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+    
+    .font-btn:hover {
+      background: rgba(255, 255, 255, 0.5);
+      transform: scale(1.1);
+    }
+    
+    .font-size-indicator {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.9rem;
+      min-width: 50px;
+      text-align: center;
     }
     
     .navigation {
@@ -122,10 +161,18 @@ interface JuzData {
     
     .verse {
       margin-bottom: 2rem;
-      padding: 1.5rem;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border-left: 4px solid #333;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .verse:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
     
     .verse-info {
@@ -134,66 +181,119 @@ interface JuzData {
     
     .chapter-verse {
       display: inline-block;
-      background: #333;
+      background: linear-gradient(135deg, #ff6b6b, #feca57);
       color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .verse-content {
+      margin-top: 1rem;
     }
     
     .verse-text {
-      font-size: 1.25rem;
-      line-height: 2;
-      color: #333;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      color: white;
     }
     
-    .verse-text.rtl {
+    .verse-text.arabic {
       direction: rtl;
       text-align: right;
       font-family: 'Amiri', 'Times New Roman', serif;
-      font-size: 1.5rem;
+      font-weight: 500;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .verse-text.indonesian {
+      color: rgba(255, 255, 255, 0.9);
+      font-style: italic;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .loading, .error {
       text-align: center;
       padding: 3rem;
-      color: #666;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      font-size: 1.1rem;
     }
     
     .retry-btn {
-      background: #333;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
-      border-radius: 4px;
+      border-radius: 25px;
       cursor: pointer;
       margin-top: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .retry-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
     
     .footer {
       margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid #e9ecef;
-      text-align: center;
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .footer-content {
-      color: #666;
-      font-size: 0.9rem;
+      text-align: center;
     }
     
-    .footer-content p {
-      margin: 0.5rem 0;
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
     }
     
-    .footer-content a {
-      color: #333;
+    .footer-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255, 255, 255, 0.9);
       text-decoration: none;
+      transition: all 0.3s ease;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
     }
     
-    .footer-content a:hover {
-      text-decoration: underline;
+    .footer-link:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .license {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .icon {
+      font-size: 1.2em;
     }
     
     @media (max-width: 768px) {
@@ -223,9 +323,10 @@ interface JuzData {
 export class JuzComponent implements OnInit {
   juzNumber!: number;
   verses: JuzVerse[] = [];
+  translations: TranslationVerse[] = [];
   loading = true;
   error = '';
-  selectedLanguage = 'ara-quranacademy';
+  fontSize = 16;
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
@@ -245,24 +346,37 @@ export class JuzComponent implements OnInit {
     this.loading = true;
     this.error = '';
     this.verses = [];
+    this.translations = [];
 
-    const apiUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/${this.selectedLanguage}.json`;
+    const arabicUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ara-quranacademy.json`;
+    const indonesianUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ind-indonesian.json`;
     
-    this.http.get<{ quran: JuzVerse[] }>(apiUrl).subscribe({
-      next: (data) => {
-        const allVerses = data.quran || [];
-        this.verses = this.filterVersesByJuz(allVerses, this.juzNumber);
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = `Failed to load Juz ${this.juzNumber}. Please try again.`;
-        this.loading = false;
-      }
+    Promise.all([
+      this.http.get<{ quran: JuzVerse[] }>(arabicUrl).toPromise(),
+      this.http.get<TranslationResponse>(indonesianUrl).toPromise()
+    ]).then(([arabicData, indonesianData]) => {
+      const allArabicVerses = arabicData?.quran || [];
+      const allIndonesianVerses = indonesianData?.quran || [];
+      
+      this.verses = this.filterVersesByJuz(allArabicVerses, this.juzNumber);
+      this.translations = this.filterVersesByJuz(allIndonesianVerses, this.juzNumber);
+      this.loading = false;
+    }).catch(err => {
+      this.error = `Failed to load Juz ${this.juzNumber}. Please try again.`;
+      this.loading = false;
     });
   }
 
-  switchLanguage() {
-    this.loadJuz();
+  increaseFontSize() {
+    if (this.fontSize < 24) {
+      this.fontSize += 2;
+    }
+  }
+
+  decreaseFontSize() {
+    if (this.fontSize > 12) {
+      this.fontSize -= 2;
+    }
   }
 
   private filterVersesByJuz(verses: JuzVerse[], juzNumber: number): JuzVerse[] {

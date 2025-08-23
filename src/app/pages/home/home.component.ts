@@ -48,13 +48,6 @@ interface Surah {
             placeholder="Search surah..." 
             class="search-input">
         </div>
-        
-        <div class="juz-filter">
-          <select [(ngModel)]="selectedJuzFilter" (change)="filterSurahs()" class="juz-select">
-            <option value="all">All Juz</option>
-            <option *ngFor="let juz of juzList" [value]="juz">Juz {{ juz }}</option>
-          </select>
-        </div>
       </div>
       
       <div *ngIf="currentMode === 'surah'" class="surah-list">
@@ -92,9 +85,24 @@ interface Surah {
       
       <footer class="footer">
         <div class="footer-content">
-          <p>API by <a href="https://github.com/fawazahmed0/quran-api" target="_blank">fawazahmed0/quran-api</a></p>
-          <p>Built by <a href="https://github.com/farkhanmaul" target="_blank">farkhanmaul</a> with help from <a href="https://claude.ai" target="_blank">Claude</a></p>
-          <p>License: Public Domain</p>
+          <div class="footer-links">
+            <a href="https://github.com/fawazahmed0/quran-api" target="_blank" class="footer-link">
+              <span class="icon">🔗</span>
+              API by fawazahmed0
+            </a>
+            <a href="https://github.com/farkhanmaul" target="_blank" class="footer-link">
+              <span class="icon">👨‍💻</span>
+              Built by farkhanmaul
+            </a>
+            <a href="https://claude.ai" target="_blank" class="footer-link">
+              <span class="icon">🤖</span>
+              AI Assistant
+            </a>
+          </div>
+          <p class="license">
+            <span class="icon">📄</span>
+            License: MIT
+          </p>
         </div>
       </footer>
     </div>
@@ -104,21 +112,31 @@ interface Surah {
       max-width: 800px;
       margin: 0 auto;
       padding: 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: white;
     }
     
     .header {
       text-align: center;
       margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .header h1 {
       font-size: 2.5rem;
       margin-bottom: 0.5rem;
-      color: #333;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      font-weight: 700;
     }
     
     .header p {
-      color: #666;
+      color: rgba(255, 255, 255, 0.9);
       font-size: 1.1rem;
     }
     
@@ -127,38 +145,35 @@ interface Surah {
       gap: 1rem;
       margin-bottom: 2rem;
       flex-wrap: wrap;
+      justify-content: center;
     }
     
     .search-box {
       flex: 1;
-      min-width: 200px;
+      max-width: 400px;
     }
     
     .search-input {
       width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      padding: 1rem;
+      border: none;
+      border-radius: 25px;
       font-size: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
     }
     
     .search-input:focus {
       outline: none;
-      border-color: #333;
-    }
-    
-    .juz-select {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1rem;
       background: white;
-      min-width: 120px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
     }
     
-    .juz-select:focus {
-      outline: none;
-      border-color: #333;
+    .search-input::placeholder {
+      color: #666;
     }
     
     .mode-tabs {
@@ -169,27 +184,34 @@ interface Surah {
     }
     
     .tab {
-      padding: 0.75rem 1.5rem;
-      border: 1px solid #ddd;
-      background: #f8f9fa;
-      color: #666;
-      border-radius: 4px;
+      padding: 1rem 2rem;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 25px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
     
     .tab.active {
-      background: #333;
-      color: white;
-      border-color: #333;
+      background: rgba(255, 255, 255, 0.9);
+      color: #667eea;
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
     
     .tab:hover {
-      background: #e9ecef;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
     }
     
     .tab.active:hover {
-      background: #555;
+      background: white;
+      transform: translateY(-2px);
     }
     
     .surah-list, .juz-list {
@@ -202,30 +224,35 @@ interface Surah {
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 1rem;
-      background: #f8f9fa;
-      border-radius: 8px;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
       text-decoration: none;
-      color: #333;
-      transition: background-color 0.2s;
+      color: white;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .surah-card:hover, .juz-card:hover {
-      background: #e9ecef;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
     
     .surah-number, .juz-number {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
-      background: #333;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #ff6b6b, #feca57);
       color: white;
       border-radius: 50%;
-      font-weight: 600;
-      font-size: 0.9rem;
+      font-weight: 700;
+      font-size: 1rem;
       flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
     
     .surah-info, .juz-info {
@@ -233,61 +260,105 @@ interface Surah {
     }
     
     .surah-name, .juz-name {
-      font-weight: 500;
+      font-weight: 600;
       display: block;
       margin-bottom: 0.25rem;
+      font-size: 1.1rem;
     }
     
     .surah-meta, .juz-meta {
-      font-size: 0.85rem;
-      color: #666;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
     }
     
     .footer {
       margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid #e9ecef;
-      text-align: center;
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .footer-content {
-      color: #666;
-      font-size: 0.9rem;
+      text-align: center;
     }
     
-    .footer-content p {
-      margin: 0.5rem 0;
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
     }
     
-    .footer-content a {
-      color: #333;
+    .footer-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255, 255, 255, 0.9);
       text-decoration: none;
+      transition: all 0.3s ease;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
     }
     
-    .footer-content a:hover {
-      text-decoration: underline;
+    .footer-link:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .license {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .icon {
+      font-size: 1.2em;
     }
     
     .no-results {
       text-align: center;
       padding: 3rem;
-      color: #666;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
     }
     
     .clear-btn {
-      background: #333;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
       cursor: pointer;
       margin-top: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .clear-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
     
     .loading {
       text-align: center;
-      padding: 2rem;
-      color: #666;
+      padding: 3rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
     }
     
     @media (max-width: 768px) {
@@ -318,7 +389,6 @@ export class HomeComponent implements OnInit {
   filteredSurahs: Surah[] = [];
   loading = true;
   searchQuery = '';
-  selectedJuzFilter: string | number = 'all';
   juzList = Array.from({length: 30}, (_, i) => i + 1);
   currentMode: 'surah' | 'juz' = 'surah';
 
@@ -463,15 +533,12 @@ export class HomeComponent implements OnInit {
         surah.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         surah.chapter.toString().includes(this.searchQuery);
       
-      const matchesJuz = this.selectedJuzFilter === 'all' || surah.juz === Number(this.selectedJuzFilter);
-      
-      return matchesSearch && matchesJuz;
+      return matchesSearch;
     });
   }
 
   clearFilters() {
     this.searchQuery = '';
-    this.selectedJuzFilter = 'all';
     this.filterSurahs();
   }
 
