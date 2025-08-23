@@ -231,4 +231,8 @@ export class SettingsComponent implements OnInit {
     const requiredKeys = ['theme', 'language', 'fontSize', 'arabicFont'];
     return requiredKeys.every(key => key in settings);
   }
+
+  getCurrentDate(): string {
+    return new Date().toLocaleDateString();
+  }
 }
