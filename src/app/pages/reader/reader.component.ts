@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 interface Verse {
   chapter: number;
@@ -16,12 +17,19 @@ interface ApiResponse {
 @Component({
   selector: 'app-reader',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   template: `
     <div class="container">
       <header class="header">
         <button (click)="goBack()" class="back-btn">← Back</button>
         <h1>Surah {{ surahNumber }}</h1>
+        <div class="language-switcher">
+          <select [(ngModel)]="selectedLanguage" (change)="switchLanguage()" class="lang-select">
+            <option value="ara-quranacademy">Arabic</option>
+            <option value="ind-indonesian">Indonesian</option>
+            <option value="eng-sahih">English</option>
+          </select>
+        </div>
       </header>
       
       <div *ngIf="loading" class="loading">Loading surah...</div>
@@ -34,7 +42,7 @@ interface ApiResponse {
       <div *ngIf="verses && verses.length > 0 && !loading" class="surah-content">
         <div *ngFor="let verse of verses" class="verse">
           <div class="verse-number">{{ verse.verse }}</div>
-          <div class="verse-text">{{ verse.text }}</div>
+          <div class="verse-text" [class.rtl]="selectedLanguage.startsWith('ara')">{{ verse.text }}</div>
         </div>
       </div>
       
@@ -53,6 +61,14 @@ interface ApiResponse {
           Next Surah →
         </button>
       </div>
+      
+      <footer class="footer">
+        <div class="footer-content">
+          <p>API by <a href="https://github.com/fawazahmed0/quran-api" target="_blank">fawazahmed0/quran-api</a></p>
+          <p>Built by <a href="https://github.com/farkhanmaul" target="_blank">farkhanmaul</a> with help from <a href="https://claude.ai" target="_blank">Claude</a></p>
+          <p>License: Public Domain</p>
+        </div>
+      </footer>
     </div>
   `,
   styles: [`
@@ -69,6 +85,15 @@ interface ApiResponse {
       margin-bottom: 2rem;
       padding-bottom: 1rem;
       border-bottom: 1px solid #eee;
+      flex-wrap: wrap;
+    }
+    
+    .language-switcher .lang-select {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      background: white;
     }
     
     .back-btn {
@@ -139,9 +164,38 @@ interface ApiResponse {
       line-height: 1.8;
       font-size: 1.1rem;
       color: #333;
+    }
+    
+    .verse-text.rtl {
       direction: rtl;
       text-align: right;
-      font-family: 'Times New Roman', serif;
+      font-family: 'Amiri', 'Times New Roman', serif;
+      font-size: 1.3rem;
+    }
+    
+    .footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e9ecef;
+      text-align: center;
+    }
+    
+    .footer-content {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .footer-content p {
+      margin: 0.5rem 0;
+    }
+    
+    .footer-content a {
+      color: #333;
+      text-decoration: none;
+    }
+    
+    .footer-content a:hover {
+      text-decoration: underline;
     }
     
     .navigation {
@@ -180,7 +234,12 @@ interface ApiResponse {
       
       .verse-text {
         text-align: center;
+      }
+      
+      .verse-text.rtl {
         direction: ltr;
+        text-align: center;
+        font-size: 1.1rem;
       }
       
       .navigation {
@@ -194,6 +253,7 @@ export class ReaderComponent implements OnInit {
   verses: Verse[] = [];
   loading = false;
   error = '';
+  selectedLanguage = 'ara-quranacademy';
 
   constructor(
     private route: ActivatedRoute,
@@ -214,7 +274,7 @@ export class ReaderComponent implements OnInit {
     this.verses = [];
 
     // Using the working API endpoint
-    const apiUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ara-quranacademy/${this.surahNumber}.json`;
+    const apiUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/${this.selectedLanguage}/${this.surahNumber}.json`;
     
     this.http.get<ApiResponse>(apiUrl).subscribe({
       next: (data) => {
@@ -243,5 +303,9 @@ export class ReaderComponent implements OnInit {
     if (this.surahNumber < 114) {
       this.router.navigate(['/surah', this.surahNumber + 1]);
     }
+  }
+  
+  switchLanguage() {
+    this.loadSurah();
   }
 }

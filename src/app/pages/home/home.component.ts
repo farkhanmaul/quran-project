@@ -19,10 +19,27 @@ interface Surah {
     <div class="container">
       <header class="header">
         <h1>Al-Quran</h1>
-        <p>Choose a surah to read</p>
+        <p>Choose how to read the Quran</p>
       </header>
       
-      <div class="filters">
+      <div class="reading-modes">
+        <div class="mode-tabs">
+          <button 
+            class="tab" 
+            [class.active]="currentMode === 'surah'"
+            (click)="switchMode('surah')">
+            By Surah
+          </button>
+          <button 
+            class="tab" 
+            [class.active]="currentMode === 'juz'"
+            (click)="switchMode('juz')">
+            By Juz
+          </button>
+        </div>
+      </div>
+      
+      <div class="filters" *ngIf="currentMode === 'surah'">
         <div class="search-box">
           <input 
             type="text" 
@@ -33,14 +50,14 @@ interface Surah {
         </div>
         
         <div class="juz-filter">
-          <select [(ngModel)]="selectedJuz" (change)="filterSurahs()" class="juz-select">
+          <select [(ngModel)]="selectedJuzFilter" (change)="filterSurahs()" class="juz-select">
             <option value="all">All Juz</option>
             <option *ngFor="let juz of juzList" [value]="juz">Juz {{ juz }}</option>
           </select>
         </div>
       </div>
       
-      <div class="surah-list">
+      <div *ngIf="currentMode === 'surah'" class="surah-list">
         <a 
           *ngFor="let surah of filteredSurahs" 
           [routerLink]="['/surah', surah.chapter]"
@@ -53,12 +70,33 @@ interface Surah {
         </a>
       </div>
       
+      <div *ngIf="currentMode === 'juz'" class="juz-list">
+        <a 
+          *ngFor="let juz of juzList" 
+          [routerLink]="['/juz', juz]"
+          class="juz-card">
+          <span class="juz-number">{{ juz }}</span>
+          <div class="juz-info">
+            <span class="juz-name">Juz {{ juz }}</span>
+            <span class="juz-meta">{{ getJuzDescription(juz) }}</span>
+          </div>
+        </a>
+      </div>
+      
       <div *ngIf="loading" class="loading">Loading...</div>
       
-      <div *ngIf="filteredSurahs.length === 0 && !loading" class="no-results">
+      <div *ngIf="currentMode === 'surah' && filteredSurahs.length === 0 && !loading" class="no-results">
         <p>No surahs found</p>
         <button (click)="clearFilters()" class="clear-btn">Clear filters</button>
       </div>
+      
+      <footer class="footer">
+        <div class="footer-content">
+          <p>API by <a href="https://github.com/fawazahmed0/quran-api" target="_blank">fawazahmed0/quran-api</a></p>
+          <p>Built by <a href="https://github.com/farkhanmaul" target="_blank">farkhanmaul</a> with help from <a href="https://claude.ai" target="_blank">Claude</a></p>
+          <p>License: Public Domain</p>
+        </div>
+      </footer>
     </div>
   `,
   styles: [`
@@ -123,13 +161,44 @@ interface Surah {
       border-color: #333;
     }
     
-    .surah-list {
+    .mode-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+    
+    .tab {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid #ddd;
+      background: #f8f9fa;
+      color: #666;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .tab.active {
+      background: #333;
+      color: white;
+      border-color: #333;
+    }
+    
+    .tab:hover {
+      background: #e9ecef;
+    }
+    
+    .tab.active:hover {
+      background: #555;
+    }
+    
+    .surah-list, .juz-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1rem;
     }
     
-    .surah-card {
+    .surah-card, .juz-card {
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -141,11 +210,11 @@ interface Surah {
       transition: background-color 0.2s;
     }
     
-    .surah-card:hover {
+    .surah-card:hover, .juz-card:hover {
       background: #e9ecef;
     }
     
-    .surah-number {
+    .surah-number, .juz-number {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -159,19 +228,44 @@ interface Surah {
       flex-shrink: 0;
     }
     
-    .surah-info {
+    .surah-info, .juz-info {
       flex: 1;
     }
     
-    .surah-name {
+    .surah-name, .juz-name {
       font-weight: 500;
       display: block;
       margin-bottom: 0.25rem;
     }
     
-    .surah-meta {
+    .surah-meta, .juz-meta {
       font-size: 0.85rem;
       color: #666;
+    }
+    
+    .footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e9ecef;
+      text-align: center;
+    }
+    
+    .footer-content {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .footer-content p {
+      margin: 0.5rem 0;
+    }
+    
+    .footer-content a {
+      color: #333;
+      text-decoration: none;
+    }
+    
+    .footer-content a:hover {
+      text-decoration: underline;
     }
     
     .no-results {
@@ -201,12 +295,20 @@ interface Surah {
         padding: 1rem;
       }
       
-      .surah-list {
+      .surah-list, .juz-list {
         grid-template-columns: 1fr;
       }
       
       .header h1 {
         font-size: 2rem;
+      }
+      
+      .mode-tabs {
+        flex-direction: column;
+      }
+      
+      .tab {
+        padding: 1rem;
       }
     }
   `]
@@ -216,8 +318,9 @@ export class HomeComponent implements OnInit {
   filteredSurahs: Surah[] = [];
   loading = true;
   searchQuery = '';
-  selectedJuz: string | number = 'all';
+  selectedJuzFilter: string | number = 'all';
   juzList = Array.from({length: 30}, (_, i) => i + 1);
+  currentMode: 'surah' | 'juz' = 'surah';
 
   // Complete surah data with juz and verse count
   private surahData = [
@@ -360,7 +463,7 @@ export class HomeComponent implements OnInit {
         surah.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         surah.chapter.toString().includes(this.searchQuery);
       
-      const matchesJuz = this.selectedJuz === 'all' || surah.juz === Number(this.selectedJuz);
+      const matchesJuz = this.selectedJuzFilter === 'all' || surah.juz === Number(this.selectedJuzFilter);
       
       return matchesSearch && matchesJuz;
     });
@@ -368,7 +471,50 @@ export class HomeComponent implements OnInit {
 
   clearFilters() {
     this.searchQuery = '';
-    this.selectedJuz = 'all';
+    this.selectedJuzFilter = 'all';
     this.filterSurahs();
+  }
+
+  switchMode(mode: 'surah' | 'juz') {
+    this.currentMode = mode;
+    if (mode === 'surah') {
+      this.clearFilters();
+    }
+  }
+
+  getJuzDescription(juzNumber: number): string {
+    const juzDescriptions: { [key: number]: string } = {
+      1: 'Al-Fatiha - Al-Baqarah (141)',
+      2: 'Al-Baqarah (142-252)',
+      3: 'Al-Baqarah (253) - Aal-E-Imran (92)',
+      4: 'Aal-E-Imran (93) - An-Nisa (23)',
+      5: 'An-Nisa (24-147)',
+      6: 'An-Nisa (148) - Al-Maidah (81)',
+      7: 'Al-Maidah (82) - Al-Anam (110)',
+      8: 'Al-Anam (111) - Al-Araf (87)',
+      9: 'Al-Araf (88) - Al-Anfal (40)',
+      10: 'Al-Anfal (41) - At-Tawbah (92)',
+      11: 'At-Tawbah (93) - Hud (5)',
+      12: 'Hud (6) - Yusuf (52)',
+      13: 'Yusuf (53) - Ibrahim (52)',
+      14: 'Al-Hijr - An-Nahl',
+      15: 'Al-Isra - Al-Kahf (74)',
+      16: 'Al-Kahf (75) - Ta-Ha',
+      17: 'Al-Anbiya - Al-Hajj',
+      18: 'Al-Mumenoon - Al-Furqan (20)',
+      19: 'Al-Furqan (21) - An-Naml (55)',
+      20: 'An-Naml (56) - Al-Ankabut (45)',
+      21: 'Al-Ankabut (46) - Al-Ahzab (30)',
+      22: 'Al-Ahzab (31) - Ya-Sin (27)',
+      23: 'Ya-Sin (28) - Az-Zumar (31)',
+      24: 'Az-Zumar (32) - Fussilat (46)',
+      25: 'Fussilat (47) - Al-Jathiya',
+      26: 'Al-Ahqaf - Adh-Dhariyat (30)',
+      27: 'Adh-Dhariyat (31) - Al-Hadid',
+      28: 'Al-Mujadila - At-Tahrim',
+      29: 'Al-Mulk - Al-Mursalat',
+      30: 'An-Naba - An-Nas'
+    };
+    return juzDescriptions[juzNumber] || `Juz ${juzNumber}`;
   }
 }
