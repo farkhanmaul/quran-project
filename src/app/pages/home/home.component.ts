@@ -109,150 +109,144 @@ interface Surah {
   `,
   styles: [`
     .container {
-      max-width: 800px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 3rem 4rem;
       min-height: 100vh;
-      color: white;
+      background: #fafafa;
+      color: #2c3e50;
     }
     
     .header {
       text-align: center;
-      margin-bottom: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 2rem;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 4rem;
+      padding: 3rem 0;
+      border-bottom: 1px solid #e8e9ea;
     }
     
     .header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      font-weight: 700;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #1a202c;
+      font-weight: 300;
+      letter-spacing: -0.5px;
+      font-family: 'Georgia', 'Times', serif;
     }
     
     .header p {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 1.1rem;
+      color: #4a5568;
+      font-size: 1.2rem;
+      font-weight: 300;
     }
     
     .filters {
       display: flex;
       gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
+      margin-bottom: 3rem;
       justify-content: center;
     }
     
     .search-box {
-      flex: 1;
-      max-width: 400px;
+      width: 100%;
+      max-width: 500px;
     }
     
     .search-input {
       width: 100%;
-      padding: 1rem;
-      border: none;
-      border-radius: 25px;
+      padding: 1rem 1.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
       font-size: 1rem;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
+      background: white;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .search-input:focus {
       outline: none;
-      background: white;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-      transform: translateY(-2px);
+      border-color: #2d3748;
+      box-shadow: 0 0 0 3px rgba(45, 55, 72, 0.1);
     }
     
     .search-input::placeholder {
-      color: #666;
+      color: #9ca3af;
     }
     
     .mode-tabs {
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
+      gap: 0;
+      margin-bottom: 3rem;
       justify-content: center;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .tab {
-      padding: 1rem 2rem;
+      padding: 1rem 2.5rem;
       border: none;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border-radius: 25px;
+      background: white;
+      color: #4a5568;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       font-weight: 500;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-size: 1rem;
+      border-right: 1px solid #d1d5db;
+    }
+    
+    .tab:last-child {
+      border-right: none;
     }
     
     .tab.active {
-      background: rgba(255, 255, 255, 0.9);
-      color: #667eea;
-      border-color: rgba(255, 255, 255, 0.5);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      background: #2d3748;
+      color: white;
     }
     
-    .tab:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-1px);
-    }
-    
-    .tab.active:hover {
-      background: white;
-      transform: translateY(-2px);
+    .tab:hover:not(.active) {
+      background: #f7fafc;
     }
     
     .surah-list, .juz-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
     }
     
     .surah-card, .juz-card {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
+      gap: 1.5rem;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
       text-decoration: none;
-      color: white;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #2d3748;
+      transition: all 0.2s ease;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .surah-card:hover, .juz-card:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      border-color: #cbd5e0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
     }
     
     .surah-number, .juz-number {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, #ff6b6b, #feca57);
+      width: 60px;
+      height: 60px;
+      background: #2d3748;
       color: white;
-      border-radius: 50%;
-      font-weight: 700;
-      font-size: 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1.1rem;
       flex-shrink: 0;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
     
     .surah-info, .juz-info {
@@ -262,22 +256,21 @@ interface Surah {
     .surah-name, .juz-name {
       font-weight: 600;
       display: block;
-      margin-bottom: 0.25rem;
-      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+      color: #1a202c;
     }
     
     .surah-meta, .juz-meta {
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.95rem;
+      color: #4a5568;
     }
     
     .footer {
-      margin-top: 3rem;
-      padding: 2rem;
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 5rem;
+      padding: 3rem 0;
+      border-top: 1px solid #e2e8f0;
+      background: white;
     }
     
     .footer-content {
@@ -287,8 +280,8 @@ interface Surah {
     .footer-links {
       display: flex;
       justify-content: center;
-      gap: 2rem;
-      margin-bottom: 1rem;
+      gap: 3rem;
+      margin-bottom: 1.5rem;
       flex-wrap: wrap;
     }
     
@@ -296,22 +289,18 @@ interface Surah {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: rgba(255, 255, 255, 0.9);
+      color: #4a5568;
       text-decoration: none;
-      transition: all 0.3s ease;
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      font-weight: 500;
     }
     
     .footer-link:hover {
-      color: white;
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
+      color: #2d3748;
     }
     
     .license {
-      color: rgba(255, 255, 255, 0.8);
+      color: #718096;
       font-size: 0.9rem;
       margin: 0;
       display: flex;
@@ -321,44 +310,39 @@ interface Surah {
     }
     
     .icon {
-      font-size: 1.2em;
+      font-size: 1.1em;
     }
     
     .no-results {
       text-align: center;
-      padding: 3rem;
-      color: rgba(255, 255, 255, 0.9);
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      backdrop-filter: blur(10px);
+      padding: 4rem;
+      color: #4a5568;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
     }
     
     .clear-btn {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: #2d3748;
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
-      border-radius: 25px;
+      border-radius: 8px;
       cursor: pointer;
       margin-top: 1rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
     
     .clear-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      background: #1a202c;
     }
     
     .loading {
       text-align: center;
-      padding: 3rem;
-      color: rgba(255, 255, 255, 0.9);
+      padding: 4rem;
+      color: #4a5568;
       font-size: 1.1rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      backdrop-filter: blur(10px);
     }
     
     @media (max-width: 768px) {

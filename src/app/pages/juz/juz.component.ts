@@ -68,36 +68,34 @@ interface TranslationResponse {
   `,
   styles: [`
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 3rem 4rem;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background: #fafafa;
+      color: #2c3e50;
     }
     
     .header {
-      margin-bottom: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 2rem;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 3rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid #e8e9ea;
     }
     
     .header-top {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
     
     .header h1 {
       font-size: 2.5rem;
       margin: 0;
-      color: white;
-      font-weight: 700;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      color: #1a202c;
+      font-weight: 300;
+      font-family: 'Georgia', 'Times', serif;
+      letter-spacing: -0.5px;
     }
     
     .controls {
@@ -109,54 +107,62 @@ interface TranslationResponse {
     .font-controls {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 0.5rem;
-      border-radius: 25px;
+      gap: 1rem;
+      background: white;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .font-btn {
-      background: rgba(255, 255, 255, 0.3);
-      color: white;
-      border: none;
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
+      background: #f7fafc;
+      color: #4a5568;
+      border: 1px solid #d1d5db;
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: bold;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      font-size: 0.9rem;
     }
     
     .font-btn:hover {
-      background: rgba(255, 255, 255, 0.5);
-      transform: scale(1.1);
+      background: #edf2f7;
+      border-color: #a0aec0;
     }
     
     .font-size-indicator {
-      color: rgba(255, 255, 255, 0.9);
+      color: #4a5568;
       font-size: 0.9rem;
-      min-width: 50px;
+      min-width: 60px;
       text-align: center;
+      font-weight: 500;
     }
     
     .navigation {
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
     }
     
     .back-btn {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      background: #f8f9fa;
-      color: #333;
+      padding: 0.75rem 1.5rem;
+      background: white;
+      color: #4a5568;
       text-decoration: none;
-      border-radius: 4px;
-      transition: background-color 0.2s;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .back-btn:hover {
-      background: #e9ecef;
+      background: #f7fafc;
+      border-color: #a0aec0;
     }
     
     .verses-container {
@@ -164,44 +170,42 @@ interface TranslationResponse {
     }
     
     .verse {
-      margin-bottom: 2rem;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: all 0.3s ease;
+      margin-bottom: 3rem;
+      padding: 2.5rem;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
     }
     
     .verse:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border-color: #cbd5e0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     
     .verse-info {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
     
     .chapter-verse {
       display: inline-block;
-      background: linear-gradient(135deg, #ff6b6b, #feca57);
+      background: #2d3748;
       color: white;
       padding: 0.5rem 1rem;
-      border-radius: 15px;
+      border-radius: 8px;
       font-size: 0.9rem;
-      font-weight: 700;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      font-weight: 600;
     }
     
     .verse-content {
-      margin-top: 1rem;
+      margin-top: 0;
     }
     
     .verse-text {
       line-height: 1.8;
-      margin-bottom: 1rem;
-      color: white;
+      margin-bottom: 1.5rem;
+      color: #2d3748;
     }
     
     .verse-text.arabic {
@@ -209,51 +213,49 @@ interface TranslationResponse {
       text-align: right;
       font-family: 'Amiri', 'Times New Roman', serif;
       font-weight: 500;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      color: #1a202c;
+      margin-bottom: 2rem;
     }
     
     .verse-text.indonesian {
-      color: rgba(255, 255, 255, 0.9);
+      color: #4a5568;
       font-style: italic;
-      padding-top: 0.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 1rem;
+      border-top: 1px solid #e2e8f0;
+      line-height: 1.6;
     }
     
     .loading, .error {
       text-align: center;
-      padding: 3rem;
-      color: rgba(255, 255, 255, 0.9);
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
+      padding: 4rem;
+      color: #4a5568;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
       font-size: 1.1rem;
     }
     
     .retry-btn {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: #2d3748;
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
-      border-radius: 25px;
+      border-radius: 8px;
       cursor: pointer;
       margin-top: 1rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
     
     .retry-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      background: #1a202c;
     }
     
     .footer {
-      margin-top: 3rem;
-      padding: 2rem;
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 5rem;
+      padding: 3rem 0;
+      border-top: 1px solid #e2e8f0;
+      background: white;
     }
     
     .footer-content {
@@ -263,8 +265,8 @@ interface TranslationResponse {
     .footer-links {
       display: flex;
       justify-content: center;
-      gap: 2rem;
-      margin-bottom: 1rem;
+      gap: 3rem;
+      margin-bottom: 1.5rem;
       flex-wrap: wrap;
     }
     
@@ -272,22 +274,18 @@ interface TranslationResponse {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: rgba(255, 255, 255, 0.9);
+      color: #4a5568;
       text-decoration: none;
-      transition: all 0.3s ease;
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      font-weight: 500;
     }
     
     .footer-link:hover {
-      color: white;
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
+      color: #2d3748;
     }
     
     .license {
-      color: rgba(255, 255, 255, 0.8);
+      color: #718096;
       font-size: 0.9rem;
       margin: 0;
       display: flex;
@@ -297,7 +295,7 @@ interface TranslationResponse {
     }
     
     .icon {
-      font-size: 1.2em;
+      font-size: 1.1em;
     }
     
     @media (max-width: 768px) {
@@ -353,7 +351,7 @@ export class JuzComponent implements OnInit {
     this.translations = [];
 
     const arabicUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ara-quranacademy.json`;
-    const indonesianUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ind-indonesian.json`;
+    const indonesianUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ind-indonesianislam.json`;
     
     Promise.all([
       this.http.get<{ quran: JuzVerse[] }>(arabicUrl).toPromise(),

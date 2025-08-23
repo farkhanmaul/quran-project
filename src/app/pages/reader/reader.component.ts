@@ -103,28 +103,25 @@ interface TranslationResponse {
   `,
   styles: [`
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 2rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 3rem 4rem;
       min-height: 100vh;
-      color: white;
+      background: #fafafa;
+      color: #2c3e50;
     }
     
     .header {
-      margin-bottom: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 2rem;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 3rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid #e8e9ea;
     }
     
     .header-top {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
     }
     
     .controls {
@@ -136,87 +133,94 @@ interface TranslationResponse {
     .font-controls {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 0.5rem;
-      border-radius: 25px;
+      gap: 1rem;
+      background: white;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .font-btn {
-      background: rgba(255, 255, 255, 0.3);
-      color: white;
-      border: none;
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
+      background: #f7fafc;
+      color: #4a5568;
+      border: 1px solid #d1d5db;
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: bold;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      font-size: 0.9rem;
     }
     
     .font-btn:hover {
-      background: rgba(255, 255, 255, 0.5);
-      transform: scale(1.1);
+      background: #edf2f7;
+      border-color: #a0aec0;
     }
     
     .font-size-indicator {
-      color: rgba(255, 255, 255, 0.9);
+      color: #4a5568;
       font-size: 0.9rem;
-      min-width: 50px;
+      min-width: 60px;
       text-align: center;
+      font-weight: 500;
     }
     
     .back-btn {
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: white;
+      border: 1px solid #d1d5db;
       padding: 0.75rem 1.5rem;
-      border-radius: 25px;
+      border-radius: 8px;
       cursor: pointer;
-      color: white;
-      transition: all 0.3s ease;
+      color: #4a5568;
+      transition: all 0.2s ease;
       font-weight: 500;
-      backdrop-filter: blur(10px);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .back-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
+      background: #f7fafc;
+      border-color: #a0aec0;
     }
     
     .header h1 {
       margin: 0;
-      color: white;
-      font-size: 2rem;
-      font-weight: 700;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      color: #1a202c;
+      font-size: 2.5rem;
+      font-weight: 300;
+      font-family: 'Georgia', 'Times', serif;
+      letter-spacing: -0.5px;
     }
     
     .loading, .error {
       text-align: center;
-      padding: 3rem;
-      color: rgba(255, 255, 255, 0.9);
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
+      padding: 4rem;
+      color: #4a5568;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
       font-size: 1.1rem;
     }
     
     .retry-btn {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: #2d3748;
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
-      border-radius: 25px;
+      border-radius: 8px;
       cursor: pointer;
       margin-top: 1rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
     
     .retry-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      background: #1a202c;
     }
     
     .surah-content {
@@ -225,35 +229,33 @@ interface TranslationResponse {
     
     .verse {
       display: flex;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      padding: 2.5rem;
+      background: white;
+      border-radius: 12px;
       align-items: flex-start;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: all 0.3s ease;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
     }
     
     .verse:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border-color: #cbd5e0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     
     .verse-number {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, #ff6b6b, #feca57);
+      min-width: 60px;
+      height: 60px;
+      background: #2d3748;
       color: white;
-      border-radius: 50%;
-      font-weight: 700;
-      font-size: 1rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1.1rem;
       flex-shrink: 0;
     }
     
@@ -263,8 +265,8 @@ interface TranslationResponse {
     
     .verse-text {
       line-height: 1.8;
-      margin-bottom: 1rem;
-      color: white;
+      margin-bottom: 1.5rem;
+      color: #2d3748;
     }
     
     .verse-text.arabic {
@@ -272,23 +274,23 @@ interface TranslationResponse {
       text-align: right;
       font-family: 'Amiri', 'Times New Roman', serif;
       font-weight: 500;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      color: #1a202c;
+      margin-bottom: 2rem;
     }
     
     .verse-text.indonesian {
-      color: rgba(255, 255, 255, 0.9);
+      color: #4a5568;
       font-style: italic;
-      padding-top: 0.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 1rem;
+      border-top: 1px solid #e2e8f0;
+      line-height: 1.6;
     }
     
     .footer {
-      margin-top: 3rem;
-      padding: 2rem;
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 5rem;
+      padding: 3rem 0;
+      border-top: 1px solid #e2e8f0;
+      background: white;
     }
     
     .footer-content {
@@ -298,8 +300,8 @@ interface TranslationResponse {
     .footer-links {
       display: flex;
       justify-content: center;
-      gap: 2rem;
-      margin-bottom: 1rem;
+      gap: 3rem;
+      margin-bottom: 1.5rem;
       flex-wrap: wrap;
     }
     
@@ -307,22 +309,18 @@ interface TranslationResponse {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: rgba(255, 255, 255, 0.9);
+      color: #4a5568;
       text-decoration: none;
-      transition: all 0.3s ease;
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      font-weight: 500;
     }
     
     .footer-link:hover {
-      color: white;
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
+      color: #2d3748;
     }
     
     .license {
-      color: rgba(255, 255, 255, 0.8);
+      color: #718096;
       font-size: 0.9rem;
       margin: 0;
       display: flex;
@@ -332,35 +330,31 @@ interface TranslationResponse {
     }
     
     .icon {
-      font-size: 1.2em;
+      font-size: 1.1em;
     }
     
     .navigation {
       display: flex;
       justify-content: space-between;
       gap: 1rem;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      margin-top: 2rem;
+      padding: 2rem 0;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 3rem;
     }
     
     .nav-btn {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: #2d3748;
       color: white;
       border: none;
       padding: 1rem 2rem;
-      border-radius: 25px;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
     
     .nav-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      background: #1a202c;
     }
     
     @media (max-width: 768px) {
@@ -422,7 +416,7 @@ export class ReaderComponent implements OnInit {
     // Load Arabic text
     const arabicUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ara-quranacademy/${this.surahNumber}.json`;
     // Load Indonesian translation  
-    const indonesianUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ind-indonesian/${this.surahNumber}.json`;
+    const indonesianUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ind-indonesianislam/${this.surahNumber}.json`;
     
     // Load both Arabic and Indonesian
     Promise.all([
