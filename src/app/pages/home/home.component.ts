@@ -9,6 +9,8 @@ interface Surah {
   name: string;
   juz: number;
   verses: number;
+  revelationPlace?: 'mecca' | 'medina';
+  category?: 'short' | 'medium' | 'long';
 }
 
 interface SearchResult {
@@ -34,6 +36,9 @@ interface QuranVerse {
   template: `
     <div class="container">
       <header class="header">
+        <div class="header-nav">
+          <a routerLink="/bookmarks" class="bookmarks-link">🔖 My Bookmarks</a>
+        </div>
         <h1>Al-Quran</h1>
         <p>Choose how to read the Quran</p>
       </header>
@@ -95,6 +100,33 @@ interface QuranVerse {
             (click)="toggleSearchMode()">
             Search in Content
           </button>
+        </div>
+        <div class="advanced-filters" *ngIf="currentMode === 'surah'">
+          <div class="filter-group">
+            <label>Revelation Place:</label>
+            <select [(ngModel)]="selectedRevelationPlace" (change)="filterSurahs()" class="filter-select">
+              <option value="">All</option>
+              <option value="mecca">Mecca (Makiyah)</option>
+              <option value="medina">Medina (Madaniyah)</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Verse Count:</label>
+            <select [(ngModel)]="selectedCategory" (change)="filterSurahs()" class="filter-select">
+              <option value="">All</option>
+              <option value="short">Short (≤20 verses)</option>
+              <option value="medium">Medium (21-100 verses)</option>
+              <option value="long">Long (>100 verses)</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Juz:</label>
+            <select [(ngModel)]="selectedJuz" (change)="filterSurahs()" class="filter-select">
+              <option value="">All</option>
+              <option *ngFor="let juz of juzList" [value]="juz">Juz {{ juz }}</option>
+            </select>
+          </div>
+          <button (click)="clearAllFilters()" class="clear-filters-btn">Clear All Filters</button>
         </div>
       </div>
       
@@ -236,6 +268,33 @@ interface QuranVerse {
       margin-bottom: 4rem;
       padding: 3rem 0;
       border-bottom: 1px solid #e8e9ea;
+      position: relative;
+    }
+    
+    .header-nav {
+      position: absolute;
+      top: 1rem;
+      right: 0;
+    }
+    
+    .bookmarks-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: white;
+      color: #4a5568;
+      text-decoration: none;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .bookmarks-link:hover {
+      background: #f7fafc;
+      border-color: #a0aec0;
     }
     
     .header h1 {
@@ -374,6 +433,65 @@ interface QuranVerse {
       background: white;
       border-radius: 12px;
       border: 1px solid #e2e8f0;
+    }
+    
+    .advanced-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .filter-group label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #4a5568;
+    }
+    
+    .filter-select {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: white;
+      color: #4a5568;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .filter-select:focus {
+      outline: none;
+      border-color: #2d3748;
+      box-shadow: 0 0 0 2px rgba(45, 55, 72, 0.1);
+    }
+    
+    .clear-filters-btn {
+      padding: 0.5rem 1rem;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .clear-filters-btn:hover {
+      background: #dc2626;
     }
     
     .mode-tabs {
@@ -582,6 +700,9 @@ export class HomeComponent implements OnInit {
   searchResults: SearchResult[] = [];
   allVerses: QuranVerse[] = [];
   allTranslations: QuranVerse[] = [];
+  selectedRevelationPlace = '';
+  selectedCategory = '';
+  selectedJuz = '';
   juzList = Array.from({length: 30}, (_, i) => i + 1);
   rukuList = Array.from({length: 556}, (_, i) => i + 1);  // Total 556 rukus in Quran
   pagesList = Array.from({length: 604}, (_, i) => i + 1);  // 604 pages in standard Mushaf
@@ -589,122 +710,122 @@ export class HomeComponent implements OnInit {
   maqraList = Array.from({length: 21}, (_, i) => i + 1);   // 21 maqras
   currentMode: 'surah' | 'juz' | 'ruku' | 'pages' | 'manzil' | 'maqra' = 'surah';
 
-  // Complete surah data with juz and verse count
+  // Complete surah data with juz, verse count, revelation place, and category
   private surahData = [
-    { name: 'Al-Fatiha', juz: 1, verses: 7 },
-    { name: 'Al-Baqarah', juz: 1, verses: 286 },
-    { name: 'Aal-E-Imran', juz: 3, verses: 200 },
-    { name: 'An-Nisa', juz: 4, verses: 176 },
-    { name: 'Al-Maidah', juz: 6, verses: 120 },
-    { name: 'Al-Anam', juz: 7, verses: 165 },
-    { name: 'Al-Araf', juz: 8, verses: 206 },
-    { name: 'Al-Anfal', juz: 9, verses: 75 },
-    { name: 'At-Tawbah', juz: 10, verses: 129 },
-    { name: 'Yunus', juz: 11, verses: 109 },
-    { name: 'Hud', juz: 11, verses: 123 },
-    { name: 'Yusuf', juz: 12, verses: 111 },
-    { name: 'Ar-Rad', juz: 13, verses: 43 },
-    { name: 'Ibrahim', juz: 13, verses: 52 },
-    { name: 'Al-Hijr', juz: 14, verses: 99 },
-    { name: 'An-Nahl', juz: 14, verses: 128 },
-    { name: 'Al-Isra', juz: 15, verses: 111 },
-    { name: 'Al-Kahf', juz: 15, verses: 110 },
-    { name: 'Maryam', juz: 16, verses: 98 },
-    { name: 'Ta-Ha', juz: 16, verses: 135 },
-    { name: 'Al-Anbiya', juz: 17, verses: 112 },
-    { name: 'Al-Hajj', juz: 17, verses: 78 },
-    { name: 'Al-Mumenoon', juz: 18, verses: 118 },
-    { name: 'An-Noor', juz: 18, verses: 64 },
-    { name: 'Al-Furqan', juz: 18, verses: 77 },
-    { name: 'Ash-Shuara', juz: 19, verses: 227 },
-    { name: 'An-Naml', juz: 19, verses: 93 },
-    { name: 'Al-Qasas', juz: 20, verses: 88 },
-    { name: 'Al-Ankabut', juz: 20, verses: 69 },
-    { name: 'Ar-Room', juz: 21, verses: 60 },
-    { name: 'Luqman', juz: 21, verses: 34 },
-    { name: 'As-Sajda', juz: 21, verses: 30 },
-    { name: 'Al-Ahzab', juz: 21, verses: 73 },
-    { name: 'Saba', juz: 22, verses: 54 },
-    { name: 'Fatir', juz: 22, verses: 45 },
-    { name: 'Ya-Sin', juz: 22, verses: 83 },
-    { name: 'As-Saffat', juz: 23, verses: 182 },
-    { name: 'Sad', juz: 23, verses: 88 },
-    { name: 'Az-Zumar', juz: 23, verses: 75 },
-    { name: 'Ghafir', juz: 24, verses: 85 },
-    { name: 'Fussilat', juz: 24, verses: 54 },
-    { name: 'Ash-Shura', juz: 25, verses: 53 },
-    { name: 'Az-Zukhruf', juz: 25, verses: 89 },
-    { name: 'Ad-Dukhan', juz: 25, verses: 59 },
-    { name: 'Al-Jathiya', juz: 25, verses: 37 },
-    { name: 'Al-Ahqaf', juz: 26, verses: 35 },
-    { name: 'Muhammad', juz: 26, verses: 38 },
-    { name: 'Al-Fath', juz: 26, verses: 29 },
-    { name: 'Al-Hujraat', juz: 26, verses: 18 },
-    { name: 'Qaf', juz: 26, verses: 45 },
-    { name: 'Adh-Dhariyat', juz: 26, verses: 60 },
-    { name: 'At-Tur', juz: 27, verses: 49 },
-    { name: 'An-Najm', juz: 27, verses: 62 },
-    { name: 'Al-Qamar', juz: 27, verses: 55 },
-    { name: 'Ar-Rahman', juz: 27, verses: 78 },
-    { name: 'Al-Waqia', juz: 27, verses: 96 },
-    { name: 'Al-Hadid', juz: 27, verses: 29 },
-    { name: 'Al-Mujadila', juz: 28, verses: 22 },
-    { name: 'Al-Hashr', juz: 28, verses: 24 },
-    { name: 'Al-Mumtahina', juz: 28, verses: 13 },
-    { name: 'As-Saff', juz: 28, verses: 14 },
-    { name: 'Al-Jumua', juz: 28, verses: 11 },
-    { name: 'Al-Munafiqoon', juz: 28, verses: 11 },
-    { name: 'At-Taghabun', juz: 28, verses: 18 },
-    { name: 'At-Talaq', juz: 28, verses: 12 },
-    { name: 'At-Tahrim', juz: 28, verses: 12 },
-    { name: 'Al-Mulk', juz: 29, verses: 30 },
-    { name: 'Al-Qalam', juz: 29, verses: 52 },
-    { name: 'Al-Haaqqa', juz: 29, verses: 52 },
-    { name: 'Al-Maarij', juz: 29, verses: 44 },
-    { name: 'Nooh', juz: 29, verses: 28 },
-    { name: 'Al-Jinn', juz: 29, verses: 28 },
-    { name: 'Al-Muzzammil', juz: 29, verses: 20 },
-    { name: 'Al-Muddathir', juz: 29, verses: 56 },
-    { name: 'Al-Qiyama', juz: 29, verses: 40 },
-    { name: 'Al-Insan', juz: 29, verses: 31 },
-    { name: 'Al-Mursalat', juz: 29, verses: 50 },
-    { name: 'An-Naba', juz: 30, verses: 40 },
-    { name: 'An-Naziat', juz: 30, verses: 46 },
-    { name: 'Abasa', juz: 30, verses: 42 },
-    { name: 'At-Takwir', juz: 30, verses: 29 },
-    { name: 'Al-Infitar', juz: 30, verses: 19 },
-    { name: 'Al-Mutaffifin', juz: 30, verses: 36 },
-    { name: 'Al-Inshiqaq', juz: 30, verses: 25 },
-    { name: 'Al-Burooj', juz: 30, verses: 22 },
-    { name: 'At-Tariq', juz: 30, verses: 17 },
-    { name: 'Al-Ala', juz: 30, verses: 19 },
-    { name: 'Al-Ghashiya', juz: 30, verses: 26 },
-    { name: 'Al-Fajr', juz: 30, verses: 30 },
-    { name: 'Al-Balad', juz: 30, verses: 20 },
-    { name: 'Ash-Shams', juz: 30, verses: 15 },
-    { name: 'Al-Lail', juz: 30, verses: 21 },
-    { name: 'Ad-Dhuha', juz: 30, verses: 11 },
-    { name: 'Ash-Sharh', juz: 30, verses: 8 },
-    { name: 'At-Tin', juz: 30, verses: 8 },
-    { name: 'Al-Alaq', juz: 30, verses: 19 },
-    { name: 'Al-Qadr', juz: 30, verses: 5 },
-    { name: 'Al-Baiyyina', juz: 30, verses: 8 },
-    { name: 'Az-Zalzala', juz: 30, verses: 8 },
-    { name: 'Al-Adiyat', juz: 30, verses: 11 },
-    { name: 'Al-Qaria', juz: 30, verses: 11 },
-    { name: 'At-Takathur', juz: 30, verses: 8 },
-    { name: 'Al-Asr', juz: 30, verses: 3 },
-    { name: 'Al-Humaza', juz: 30, verses: 9 },
-    { name: 'Al-Fil', juz: 30, verses: 5 },
-    { name: 'Quraish', juz: 30, verses: 4 },
-    { name: 'Al-Maun', juz: 30, verses: 7 },
-    { name: 'Al-Kawthar', juz: 30, verses: 3 },
-    { name: 'Al-Kafirun', juz: 30, verses: 6 },
-    { name: 'An-Nasr', juz: 30, verses: 3 },
-    { name: 'Al-Masadd', juz: 30, verses: 5 },
-    { name: 'Al-Ikhlas', juz: 30, verses: 4 },
-    { name: 'Al-Falaq', juz: 30, verses: 5 },
-    { name: 'An-Nas', juz: 30, verses: 6 }
+    { name: 'Al-Fatiha', juz: 1, verses: 7, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Baqarah', juz: 1, verses: 286, revelationPlace: 'medina' as const, category: 'long' as const },
+    { name: 'Aal-E-Imran', juz: 3, verses: 200, revelationPlace: 'medina' as const, category: 'long' as const },
+    { name: 'An-Nisa', juz: 4, verses: 176, revelationPlace: 'medina' as const, category: 'long' as const },
+    { name: 'Al-Maidah', juz: 6, verses: 120, revelationPlace: 'medina' as const, category: 'long' as const },
+    { name: 'Al-Anam', juz: 7, verses: 165, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Al-Araf', juz: 8, verses: 206, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Al-Anfal', juz: 9, verses: 75, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'At-Tawbah', juz: 10, verses: 129, revelationPlace: 'medina' as const, category: 'long' as const },
+    { name: 'Yunus', juz: 11, verses: 109, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Hud', juz: 11, verses: 123, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Yusuf', juz: 12, verses: 111, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Ar-Rad', juz: 13, verses: 43, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Ibrahim', juz: 13, verses: 52, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Hijr', juz: 14, verses: 99, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'An-Nahl', juz: 14, verses: 128, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Al-Isra', juz: 15, verses: 111, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Al-Kahf', juz: 15, verses: 110, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Maryam', juz: 16, verses: 98, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Ta-Ha', juz: 16, verses: 135, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Al-Anbiya', juz: 17, verses: 112, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Al-Hajj', juz: 17, verses: 78, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Al-Mumenoon', juz: 18, verses: 118, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'An-Noor', juz: 18, verses: 64, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Al-Furqan', juz: 18, verses: 77, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Ash-Shuara', juz: 19, verses: 227, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'An-Naml', juz: 19, verses: 93, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Qasas', juz: 20, verses: 88, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Ankabut', juz: 20, verses: 69, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Ar-Room', juz: 21, verses: 60, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Luqman', juz: 21, verses: 34, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'As-Sajda', juz: 21, verses: 30, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Ahzab', juz: 21, verses: 73, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Saba', juz: 22, verses: 54, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Fatir', juz: 22, verses: 45, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Ya-Sin', juz: 22, verses: 83, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'As-Saffat', juz: 23, verses: 182, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Sad', juz: 23, verses: 88, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Az-Zumar', juz: 23, verses: 75, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Ghafir', juz: 24, verses: 85, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Fussilat', juz: 24, verses: 54, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Ash-Shura', juz: 25, verses: 53, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Az-Zukhruf', juz: 25, verses: 89, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Ad-Dukhan', juz: 25, verses: 59, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Jathiya', juz: 25, verses: 37, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Ahqaf', juz: 26, verses: 35, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Muhammad', juz: 26, verses: 38, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Al-Fath', juz: 26, verses: 29, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Al-Hujraat', juz: 26, verses: 18, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'Qaf', juz: 26, verses: 45, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Adh-Dhariyat', juz: 26, verses: 60, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'At-Tur', juz: 27, verses: 49, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'An-Najm', juz: 27, verses: 62, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Qamar', juz: 27, verses: 55, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Ar-Rahman', juz: 27, verses: 78, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Al-Waqia', juz: 27, verses: 96, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Hadid', juz: 27, verses: 29, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Al-Mujadila', juz: 28, verses: 22, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Al-Hashr', juz: 28, verses: 24, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Al-Mumtahina', juz: 28, verses: 13, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'As-Saff', juz: 28, verses: 14, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'Al-Jumua', juz: 28, verses: 11, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'Al-Munafiqoon', juz: 28, verses: 11, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'At-Taghabun', juz: 28, verses: 18, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'At-Talaq', juz: 28, verses: 12, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'At-Tahrim', juz: 28, verses: 12, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'Al-Mulk', juz: 29, verses: 30, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Qalam', juz: 29, verses: 52, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Haaqqa', juz: 29, verses: 52, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Maarij', juz: 29, verses: 44, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Nooh', juz: 29, verses: 28, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Jinn', juz: 29, verses: 28, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Muzzammil', juz: 29, verses: 20, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Muddathir', juz: 29, verses: 56, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Qiyama', juz: 29, verses: 40, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Insan', juz: 29, verses: 31, revelationPlace: 'medina' as const, category: 'medium' as const },
+    { name: 'Al-Mursalat', juz: 29, verses: 50, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'An-Naba', juz: 30, verses: 40, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'An-Naziat', juz: 30, verses: 46, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Abasa', juz: 30, verses: 42, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'At-Takwir', juz: 30, verses: 29, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Infitar', juz: 30, verses: 19, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Mutaffifin', juz: 30, verses: 36, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Inshiqaq', juz: 30, verses: 25, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Burooj', juz: 30, verses: 22, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'At-Tariq', juz: 30, verses: 17, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Ala', juz: 30, verses: 19, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Ghashiya', juz: 30, verses: 26, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Fajr', juz: 30, verses: 30, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Al-Balad', juz: 30, verses: 20, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Ash-Shams', juz: 30, verses: 15, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Lail', juz: 30, verses: 21, revelationPlace: 'mecca' as const, category: 'medium' as const },
+    { name: 'Ad-Dhuha', juz: 30, verses: 11, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Ash-Sharh', juz: 30, verses: 8, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'At-Tin', juz: 30, verses: 8, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Alaq', juz: 30, verses: 19, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Qadr', juz: 30, verses: 5, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Baiyyina', juz: 30, verses: 8, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'Az-Zalzala', juz: 30, verses: 8, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'Al-Adiyat', juz: 30, verses: 11, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Qaria', juz: 30, verses: 11, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'At-Takathur', juz: 30, verses: 8, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Asr', juz: 30, verses: 3, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Humaza', juz: 30, verses: 9, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Fil', juz: 30, verses: 5, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Quraish', juz: 30, verses: 4, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Maun', juz: 30, verses: 7, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Kawthar', juz: 30, verses: 3, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Kafirun', juz: 30, verses: 6, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'An-Nasr', juz: 30, verses: 3, revelationPlace: 'medina' as const, category: 'short' as const },
+    { name: 'Al-Masadd', juz: 30, verses: 5, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Ikhlas', juz: 30, verses: 4, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'Al-Falaq', juz: 30, verses: 5, revelationPlace: 'mecca' as const, category: 'short' as const },
+    { name: 'An-Nas', juz: 30, verses: 6, revelationPlace: 'mecca' as const, category: 'short' as const }
   ];
 
   constructor(private http: HttpClient) {}
@@ -719,7 +840,9 @@ export class HomeComponent implements OnInit {
       chapter: index + 1,
       name: data.name,
       juz: data.juz,
-      verses: data.verses
+      verses: data.verses,
+      revelationPlace: data.revelationPlace,
+      category: data.category
     }));
     this.filteredSurahs = [...this.surahs];
     this.loading = false;
@@ -734,13 +857,30 @@ export class HomeComponent implements OnInit {
           surah.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           surah.chapter.toString().includes(this.searchQuery);
         
-        return matchesSearch;
+        const matchesRevelationPlace = !this.selectedRevelationPlace || 
+          surah.revelationPlace === this.selectedRevelationPlace;
+        
+        const matchesCategory = !this.selectedCategory || 
+          surah.category === this.selectedCategory;
+        
+        const matchesJuz = !this.selectedJuz || 
+          surah.juz === +this.selectedJuz;
+        
+        return matchesSearch && matchesRevelationPlace && matchesCategory && matchesJuz;
       });
     }
   }
 
   clearFilters() {
     this.searchQuery = '';
+    this.filterSurahs();
+  }
+
+  clearAllFilters() {
+    this.searchQuery = '';
+    this.selectedRevelationPlace = '';
+    this.selectedCategory = '';
+    this.selectedJuz = '';
     this.filterSurahs();
   }
 

@@ -8,5 +8,6 @@ export const routes: Routes = [
   { path: 'page/:id', loadComponent: () => import('./pages/page/page.component').then(m => m.PageComponent) },
   { path: 'manzil/:id', loadComponent: () => import('./pages/manzil/manzil.component').then(m => m.ManzilComponent) },
   { path: 'maqra/:id', loadComponent: () => import('./pages/maqra/maqra.component').then(m => m.MaqraComponent) },
+  { path: 'bookmarks', loadComponent: () => import('./pages/bookmarks/bookmarks.component').then(m => m.BookmarksComponent) },
   { path: '**', redirectTo: '' }
 ];

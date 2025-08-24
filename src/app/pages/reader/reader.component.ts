@@ -3,12 +3,22 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { OfflineService } from '../../services/offline.service';
 
 interface Verse {
   chapter: number;
   verse: number;
   text: string;
   sajda?: boolean;
+}
+
+interface BookmarkedVerse {
+  chapter: number;
+  verse: number;
+  text: string;
+  translation?: string;
+  surahName?: string;
+  timestamp: number;
 }
 
 interface ApiResponse {
@@ -30,7 +40,7 @@ interface TranslationResponse {
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   template: `
-    <div class="container">
+    <div class="container" [class.night-mode]="nightMode">
       <header class="header">
         <div class="header-top">
           <button (click)="goBack()" class="back-btn">← Back</button>
@@ -50,12 +60,49 @@ interface TranslationResponse {
           <button (click)="decreaseFontSize()" class="font-btn">A-</button>
           <span class="font-size-indicator">{{ fontSize }}px</span>
           <button (click)="increaseFontSize()" class="font-btn">A+</button>
+          <div class="control-separator"></div>
+          <button 
+            (click)="toggleDiacritics()" 
+            class="control-btn"
+            [class.active]="showDiacritics"
+            title="Toggle Diacritics">
+            ◌َ
+          </button>
+          <button 
+            (click)="toggleNightMode()" 
+            class="control-btn"
+            [class.active]="nightMode"
+            title="Toggle Night Mode">
+            {{ nightMode ? '☀️' : '🌙' }}
+          </button>
+          <div class="control-separator"></div>
+          <button 
+            (click)="toggleOfflineDownload()" 
+            class="control-btn"
+            [class.active]="isDownloaded"
+            [disabled]="!isOnline && !isDownloaded"
+            title="{{ isDownloaded ? 'Remove from offline' : 'Download for offline' }}">
+            {{ isDownloaded ? '💾' : '📥' }}
+          </button>
+        </div>
+        <div class="offline-indicator" *ngIf="!isOnline">
+          <span class="offline-icon">📵</span>
+          <span>Offline Mode</span>
         </div>
       </div>
       
       <div *ngIf="verses && verses.length > 0 && !loading" class="surah-content">
         <div *ngFor="let verse of verses; let i = index" class="verse" [class.sajda-verse]="verse.sajda">
-          <div class="verse-number">{{ verse.verse }}</div>
+          <div class="verse-number">
+            {{ verse.verse }}
+            <button 
+              (click)="toggleBookmark(verse)" 
+              class="bookmark-btn"
+              [class.bookmarked]="isBookmarked(verse)"
+              title="Bookmark this verse">
+              {{ isBookmarked(verse) ? '🔖' : '📌' }}
+            </button>
+          </div>
           <div class="verse-content">
             <div class="verse-text arabic" [style.font-size.px]="fontSize + 6">
               <span *ngIf="verse.sajda" class="sajda-indicator">🕌</span>
@@ -114,6 +161,30 @@ interface TranslationResponse {
       min-height: 100vh;
       background: #fafafa;
       color: #2c3e50;
+      transition: all 0.3s ease;
+    }
+    
+    .container.night-mode {
+      background: #1a202c;
+      color: #f7fafc;
+    }
+    
+    .container.night-mode .header {
+      border-bottom-color: #4a5568;
+    }
+    
+    .container.night-mode .verse {
+      background: #2d3748;
+      border-color: #4a5568;
+    }
+    
+    .container.night-mode .verse:hover {
+      border-color: #718096;
+    }
+    
+    .container.night-mode .footer {
+      background: #2d3748;
+      border-top-color: #4a5568;
     }
     
     .header {
@@ -174,6 +245,62 @@ interface TranslationResponse {
       text-align: center;
       font-weight: 500;
       writing-mode: horizontal-tb;
+    }
+    
+    .control-separator {
+      width: 100%;
+      height: 1px;
+      background: #d1d5db;
+      margin: 0.5rem 0;
+    }
+    
+    .control-btn {
+      background: #f7fafc;
+      color: #4a5568;
+      border: 1px solid #d1d5db;
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .control-btn:hover {
+      background: #edf2f7;
+      border-color: #a0aec0;
+    }
+    
+    .control-btn.active {
+      background: #2d3748;
+      color: white;
+      border-color: #2d3748;
+    }
+    
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .offline-indicator {
+      background: #fed7d7;
+      color: #c53030;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .offline-icon {
+      font-size: 1.1em;
     }
     
     .back-btn {
@@ -270,14 +397,36 @@ interface TranslationResponse {
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
       min-width: 60px;
-      height: 60px;
+      min-height: 60px;
       background: #2d3748;
       color: white;
       border-radius: 8px;
       font-weight: 600;
       font-size: 1.1rem;
       flex-shrink: 0;
+      padding: 0.5rem;
+    }
+    
+    .bookmark-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 0;
+      opacity: 0.7;
+      transition: all 0.2s ease;
+    }
+    
+    .bookmark-btn:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    
+    .bookmark-btn.bookmarked {
+      opacity: 1;
     }
     
     .verse-content {
@@ -414,16 +563,31 @@ export class ReaderComponent implements OnInit {
   loading = false;
   error = '';
   fontSize = 16;
+  showDiacritics = true;
+  nightMode = false;
+  bookmarkedVerses: BookmarkedVerse[] = [];
+  isOnline = true;
+  isDownloaded = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private offlineService: OfflineService
   ) {}
 
   ngOnInit() {
+    this.loadUserPreferences();
+    this.loadBookmarks();
+    
+    // Subscribe to online status
+    this.offlineService.online$.subscribe(online => {
+      this.isOnline = online;
+    });
+    
     this.route.params.subscribe(params => {
       this.surahNumber = +params['id'] || 1;
+      this.checkIfDownloaded();
       this.loadSurah();
     });
   }
@@ -434,9 +598,9 @@ export class ReaderComponent implements OnInit {
     this.verses = [];
     this.translations = [];
 
-    // Load Arabic text
-    const arabicUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ara-quranacademy/${this.surahNumber}.json`;
-    // Load Indonesian translation  
+    // Choose Arabic edition based on diacritics preference
+    const arabicEdition = this.showDiacritics ? 'ara-quranacademy' : 'ara-quranacademytanzil';
+    const arabicUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/${arabicEdition}/${this.surahNumber}.json`;
     const indonesianUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ind-indonesianislam/${this.surahNumber}.json`;
     
     // Load both Arabic and Indonesian
@@ -499,12 +663,110 @@ export class ReaderComponent implements OnInit {
   increaseFontSize() {
     if (this.fontSize < 24) {
       this.fontSize += 2;
+      this.saveUserPreferences();
     }
   }
 
   decreaseFontSize() {
     if (this.fontSize > 12) {
       this.fontSize -= 2;
+      this.saveUserPreferences();
+    }
+  }
+
+  toggleDiacritics() {
+    this.showDiacritics = !this.showDiacritics;
+    this.saveUserPreferences();
+    this.loadSurah(); // Reload with different edition
+  }
+
+  toggleNightMode() {
+    this.nightMode = !this.nightMode;
+    this.saveUserPreferences();
+  }
+
+  toggleBookmark(verse: Verse) {
+    const existingIndex = this.bookmarkedVerses.findIndex(
+      b => b.chapter === verse.chapter && b.verse === verse.verse
+    );
+
+    if (existingIndex >= 0) {
+      this.bookmarkedVerses.splice(existingIndex, 1);
+    } else {
+      const translation = this.translations.find(t => t.verse === verse.verse);
+      const bookmark: BookmarkedVerse = {
+        chapter: verse.chapter,
+        verse: verse.verse,
+        text: verse.text,
+        translation: translation?.text,
+        surahName: `Surah ${verse.chapter}`,
+        timestamp: Date.now()
+      };
+      this.bookmarkedVerses.push(bookmark);
+    }
+    this.saveBookmarks();
+  }
+
+  isBookmarked(verse: Verse): boolean {
+    return this.bookmarkedVerses.some(
+      b => b.chapter === verse.chapter && b.verse === verse.verse
+    );
+  }
+
+  private loadUserPreferences() {
+    const preferences = localStorage.getItem('quran-preferences');
+    if (preferences) {
+      const prefs = JSON.parse(preferences);
+      this.fontSize = prefs.fontSize || 16;
+      this.showDiacritics = prefs.showDiacritics !== undefined ? prefs.showDiacritics : true;
+      this.nightMode = prefs.nightMode || false;
+    }
+  }
+
+  private saveUserPreferences() {
+    const preferences = {
+      fontSize: this.fontSize,
+      showDiacritics: this.showDiacritics,
+      nightMode: this.nightMode
+    };
+    localStorage.setItem('quran-preferences', JSON.stringify(preferences));
+  }
+
+  private loadBookmarks() {
+    const bookmarks = localStorage.getItem('quran-bookmarks');
+    if (bookmarks) {
+      this.bookmarkedVerses = JSON.parse(bookmarks);
+    }
+  }
+
+  private saveBookmarks() {
+    localStorage.setItem('quran-bookmarks', JSON.stringify(this.bookmarkedVerses));
+  }
+
+  checkIfDownloaded() {
+    const downloadedSurahs = this.offlineService.getDownloadedSurahs();
+    this.isDownloaded = downloadedSurahs.includes(this.surahNumber);
+  }
+
+  async toggleOfflineDownload() {
+    if (this.isDownloaded) {
+      // Remove from offline storage
+      const success = await this.offlineService.removeSurah(this.surahNumber);
+      if (success) {
+        this.isDownloaded = false;
+        console.log(`Surah ${this.surahNumber} removed from offline storage`);
+      }
+    } else {
+      // Download for offline use
+      if (!this.isOnline) {
+        return; // Can't download when offline
+      }
+      
+      const success = await this.offlineService.downloadSurah(this.surahNumber);
+      if (success) {
+        this.isDownloaded = true;
+        console.log(`Surah ${this.surahNumber} downloaded for offline use`);
+      }
     }
   }
 }
