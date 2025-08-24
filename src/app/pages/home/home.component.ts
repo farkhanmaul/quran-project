@@ -37,634 +37,259 @@ interface QuranVerse {
     <div class="container">
       <header class="header">
         <div class="header-nav">
-          <a routerLink="/bookmarks" class="bookmarks-link">🔖 My Bookmarks</a>
+          <a routerLink="/bookmarks" class="bookmarks-link">📖 Bookmarks</a>
         </div>
-        <h1>Al-Quran</h1>
-        <p>Choose how to read the Quran</p>
+        <h1>القرآن الكريم</h1>
+        <p class="subtitle">Al-Quran Digital</p>
       </header>
       
-      <div class="reading-modes">
-        <div class="mode-tabs">
-          <button 
-            class="tab" 
-            [class.active]="currentMode === 'surah'"
-            (click)="switchMode('surah')">
-            By Surah
-          </button>
-          <button 
-            class="tab" 
-            [class.active]="currentMode === 'juz'"
-            (click)="switchMode('juz')">
-            By Juz
-          </button>
-          <button 
-            class="tab" 
-            [class.active]="currentMode === 'ruku'"
-            (click)="switchMode('ruku')">
-            By Ruku
-          </button>
-          <button 
-            class="tab" 
-            [class.active]="currentMode === 'pages'"
-            (click)="switchMode('pages')">
-            By Pages
-          </button>
-          <button 
-            class="tab" 
-            [class.active]="currentMode === 'manzil'"
-            (click)="switchMode('manzil')">
-            By Manzil
-          </button>
-          <button 
-            class="tab" 
-            [class.active]="currentMode === 'maqra'"
-            (click)="switchMode('maqra')">
-            By Maqra
-          </button>
-        </div>
+      <div class="navigation-tabs">
+        <button 
+          class="nav-tab" 
+          [class.active]="currentMode === 'surah'"
+          (click)="switchMode('surah')">
+          Surah
+        </button>
+        <button 
+          class="nav-tab" 
+          [class.active]="currentMode === 'juz'"
+          (click)="switchMode('juz')">
+          Juz
+        </button>
       </div>
       
-      <div class="filters" *ngIf="currentMode === 'surah'">
-        <div class="search-box">
-          <input 
-            type="text" 
-            [(ngModel)]="searchQuery" 
-            (input)="filterSurahs()"
-            placeholder="Search in Quran..." 
-            class="search-input">
-        </div>
-        <div class="filter-options">
-          <button 
-            class="filter-btn"
-            [class.active]="showSearchMode"
-            (click)="toggleSearchMode()">
-            Search in Content
-          </button>
-        </div>
-        <div class="advanced-filters" *ngIf="currentMode === 'surah'">
-          <div class="filter-group">
-            <label>Revelation Place:</label>
-            <select [(ngModel)]="selectedRevelationPlace" (change)="filterSurahs()" class="filter-select">
-              <option value="">All</option>
-              <option value="mecca">Mecca (Makiyah)</option>
-              <option value="medina">Medina (Madaniyah)</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label>Verse Count:</label>
-            <select [(ngModel)]="selectedCategory" (change)="filterSurahs()" class="filter-select">
-              <option value="">All</option>
-              <option value="short">Short (≤20 verses)</option>
-              <option value="medium">Medium (21-100 verses)</option>
-              <option value="long">Long (>100 verses)</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label>Juz:</label>
-            <select [(ngModel)]="selectedJuz" (change)="filterSurahs()" class="filter-select">
-              <option value="">All</option>
-              <option *ngFor="let juz of juzList" [value]="juz">Juz {{ juz }}</option>
-            </select>
-          </div>
-          <button (click)="clearAllFilters()" class="clear-filters-btn">Clear All Filters</button>
-        </div>
+      <div class="search-section" *ngIf="currentMode === 'surah'">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (input)="filterSurahs()"
+          placeholder="Cari surah..." 
+          class="search-input">
       </div>
       
-      <div *ngIf="currentMode === 'surah' && !showSearchMode" class="surah-list">
+      <div *ngIf="currentMode === 'surah'" class="surah-grid">
         <a 
           *ngFor="let surah of filteredSurahs" 
           [routerLink]="['/surah', surah.chapter]"
           class="surah-card">
-          <span class="surah-number">{{ surah.chapter }}</span>
-          <div class="surah-info">
+          <div class="surah-header">
+            <span class="surah-number">{{ surah.chapter }}</span>
             <span class="surah-name">{{ surah.name }}</span>
-            <span class="surah-meta">{{ surah.verses }} verses • Juz {{ surah.juz }}</span>
+          </div>
+          <div class="surah-meta">
+            {{ surah.verses }} ayat • Juz {{ surah.juz }}
           </div>
         </a>
       </div>
       
-      <div *ngIf="showSearchMode && searchQuery.length > 2" class="search-results">
-        <div *ngIf="searchLoading" class="loading">Searching...</div>
-        <div *ngIf="searchResults.length > 0 && !searchLoading" class="search-list">
-          <div *ngFor="let result of searchResults" class="search-result-card">
-            <div class="result-reference">{{ result.surahName }} {{ result.chapter }}:{{ result.verse }}</div>
-            <div class="result-text arabic" [innerHTML]="result.highlightedArabic"></div>
-            <div class="result-text indonesian" [innerHTML]="result.highlightedTranslation"></div>
-          </div>
-        </div>
-        <div *ngIf="searchResults.length === 0 && !searchLoading && searchQuery.length > 2" class="no-search-results">
-          <p>No verses found for "{{ searchQuery }}"</p>
-        </div>
-      </div>
       
-      <div *ngIf="currentMode === 'juz'" class="juz-list">
+      <div *ngIf="currentMode === 'juz'" class="juz-grid">
         <a 
           *ngFor="let juz of juzList" 
           [routerLink]="['/juz', juz]"
           class="juz-card">
-          <span class="juz-number">{{ juz }}</span>
-          <div class="juz-info">
+          <div class="juz-header">
+            <span class="juz-number">{{ juz }}</span>
             <span class="juz-name">Juz {{ juz }}</span>
-            <span class="juz-meta">{{ getJuzDescription(juz) }}</span>
           </div>
+          <div class="juz-meta">{{ getJuzDescription(juz) }}</div>
         </a>
       </div>
       
-      <div *ngIf="currentMode === 'ruku'" class="ruku-list">
-        <a 
-          *ngFor="let ruku of rukuList" 
-          [routerLink]="['/ruku', ruku]"
-          class="ruku-card">
-          <span class="ruku-number">{{ ruku }}</span>
-          <div class="ruku-info">
-            <span class="ruku-name">Ruku {{ ruku }}</span>
-            <span class="ruku-meta">{{ getRukuDescription(ruku) }}</span>
-          </div>
-        </a>
+      <div *ngIf="loading" class="loading">Memuat...</div>
+      
+      <div *ngIf="currentMode === 'surah' && filteredSurahs.length === 0 && !loading" class="no-results">
+        <p>Surah tidak ditemukan</p>
+        <button (click)="clearFilters()" class="clear-btn">Reset</button>
       </div>
-      
-      <div *ngIf="currentMode === 'pages'" class="pages-list">
-        <a 
-          *ngFor="let page of pagesList" 
-          [routerLink]="['/page', page]"
-          class="page-card">
-          <span class="page-number">{{ page }}</span>
-          <div class="page-info">
-            <span class="page-name">Page {{ page }}</span>
-            <span class="page-meta">Mushaf Page</span>
-          </div>
-        </a>
-      </div>
-      
-      <div *ngIf="currentMode === 'manzil'" class="manzil-list">
-        <a 
-          *ngFor="let manzil of manzilList" 
-          [routerLink]="['/manzil', manzil]"
-          class="manzil-card">
-          <span class="manzil-number">{{ manzil }}</span>
-          <div class="manzil-info">
-            <span class="manzil-name">Manzil {{ manzil }}</span>
-            <span class="manzil-meta">{{ getManzilDescription(manzil) }}</span>
-          </div>
-        </a>
-      </div>
-      
-      <div *ngIf="currentMode === 'maqra'" class="maqra-list">
-        <a 
-          *ngFor="let maqra of maqraList" 
-          [routerLink]="['/maqra', maqra]"
-          class="maqra-card">
-          <span class="maqra-number">{{ maqra }}</span>
-          <div class="maqra-info">
-            <span class="maqra-name">Maqra {{ maqra }}</span>
-            <span class="maqra-meta">{{ getMaqraDescription(maqra) }}</span>
-          </div>
-        </a>
-      </div>
-      
-      <div *ngIf="loading" class="loading">Loading...</div>
-      
-      <div *ngIf="currentMode === 'surah' && filteredSurahs.length === 0 && !loading && !showSearchMode" class="no-results">
-        <p>No surahs found</p>
-        <button (click)="clearFilters()" class="clear-btn">Clear filters</button>
-      </div>
-      
-      <footer class="footer">
-        <div class="footer-content">
-          <div class="footer-links">
-            <a href="https://github.com/fawazahmed0/quran-api" target="_blank" class="footer-link">
-              <span class="icon">🔗</span>
-              API
-            </a>
-            <a href="https://github.com/farkhanmaul" target="_blank" class="footer-link">
-              <span class="icon">👨‍💻</span>
-              farkhanmaul
-            </a>
-            <a href="https://claude.ai" target="_blank" class="footer-link">
-              <span class="icon">🤖</span>
-              <strong>Claude</strong>
-            </a>
-          </div>
-          <p class="license">
-            <span class="icon">📄</span>
-            License: MIT
-          </p>
-        </div>
-      </footer>
     </div>
   `,
   styles: [`
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 3rem 4rem;
+      padding: 2rem;
       min-height: 100vh;
-      background: #fafafa;
-      color: #2c3e50;
+      background: #ffffff;
+      color: #333333;
     }
     
     .header {
       text-align: center;
-      margin-bottom: 4rem;
-      padding: 3rem 0;
-      border-bottom: 1px solid #e8e9ea;
+      margin-bottom: 3rem;
       position: relative;
     }
     
     .header-nav {
       position: absolute;
-      top: 1rem;
+      top: 0;
       right: 0;
     }
     
     .bookmarks-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: white;
-      color: #4a5568;
+      padding: 0.5rem 1rem;
+      background: #f8f9fa;
+      color: #495057;
       text-decoration: none;
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-      transition: all 0.2s ease;
-      font-weight: 500;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: background 0.2s;
     }
     
     .bookmarks-link:hover {
-      background: #f7fafc;
-      border-color: #a0aec0;
+      background: #e9ecef;
     }
     
     .header h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      color: #1a202c;
-      font-weight: 300;
-      letter-spacing: -0.5px;
-      font-family: 'Georgia', 'Times', serif;
+      font-size: 2.5rem;
+      margin: 2rem 0 0.5rem 0;
+      color: #2c3e50;
+      font-family: 'Amiri', serif;
     }
     
-    .header p {
-      color: #4a5568;
-      font-size: 1.2rem;
-      font-weight: 300;
+    .subtitle {
+      color: #6c757d;
+      font-size: 1.1rem;
+      margin: 0;
     }
     
-    .filters {
+    .navigation-tabs {
       display: flex;
-      gap: 1rem;
-      margin-bottom: 3rem;
       justify-content: center;
+      gap: 0;
+      margin-bottom: 2rem;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      overflow: hidden;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
     }
     
-    .search-box {
-      width: 100%;
-      max-width: 500px;
+    .nav-tab {
+      padding: 0.75rem 2rem;
+      border: none;
+      background: #ffffff;
+      color: #495057;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      border-right: 1px solid #dee2e6;
+    }
+    
+    .nav-tab:last-child {
+      border-right: none;
+    }
+    
+    .nav-tab.active {
+      background: #2c3e50;
+      color: white;
+    }
+    
+    .nav-tab:hover:not(.active) {
+      background: #f8f9fa;
+    }
+    
+    .search-section {
+      margin-bottom: 2rem;
+      text-align: center;
     }
     
     .search-input {
       width: 100%;
-      padding: 1rem 1.5rem;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
+      max-width: 400px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
       font-size: 1rem;
-      background: white;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: border-color 0.2s;
     }
     
     .search-input:focus {
       outline: none;
-      border-color: #2d3748;
-      box-shadow: 0 0 0 3px rgba(45, 55, 72, 0.1);
+      border-color: #2c3e50;
     }
     
-    .search-input::placeholder {
-      color: #9ca3af;
-    }
-    
-    .filter-options {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      justify-content: center;
-      margin-top: 1rem;
-    }
-    
-    .filter-btn {
-      padding: 0.75rem 1.5rem;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      background: white;
-      color: #4a5568;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-weight: 500;
-    }
-    
-    .filter-btn:hover {
-      border-color: #a0aec0;
-    }
-    
-    .filter-btn.active {
-      background: #2d3748;
-      color: white;
-      border-color: #2d3748;
-    }
-    
-    .search-results {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .search-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    
-    .search-result-card {
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      transition: all 0.2s ease;
-    }
-    
-    .search-result-card:hover {
-      border-color: #cbd5e0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .result-reference {
-      font-weight: 600;
-      color: #2d3748;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    
-    .result-text {
-      margin-bottom: 1rem;
-      line-height: 1.6;
-    }
-    
-    .result-text.arabic {
-      direction: rtl;
-      text-align: right;
-      font-family: 'Amiri', 'Times New Roman', serif;
-      font-size: 1.2rem;
-      color: #1a202c;
-      margin-bottom: 1.5rem;
-    }
-    
-    .result-text.indonesian {
-      color: #4a5568;
-      font-style: italic;
-    }
-    
-    .no-search-results {
-      text-align: center;
-      padding: 4rem;
-      color: #4a5568;
-      background: white;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-    }
-    
-    .advanced-filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: center;
-      justify-content: center;
-      margin-top: 1rem;
-      padding: 1rem;
-      background: white;
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-    }
-    
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      align-items: center;
-    }
-    
-    .filter-group label {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #4a5568;
-    }
-    
-    .filter-select {
-      padding: 0.5rem 1rem;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      background: white;
-      color: #4a5568;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .filter-select:focus {
-      outline: none;
-      border-color: #2d3748;
-      box-shadow: 0 0 0 2px rgba(45, 55, 72, 0.1);
-    }
-    
-    .clear-filters-btn {
-      padding: 0.5rem 1rem;
-      background: #ef4444;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-    
-    .clear-filters-btn:hover {
-      background: #dc2626;
-    }
-    
-    .mode-tabs {
-      display: flex;
-      gap: 0;
-      margin-bottom: 3rem;
-      justify-content: center;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      overflow: hidden;
-      background: white;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .tab {
-      padding: 1rem 2.5rem;
-      border: none;
-      background: white;
-      color: #4a5568;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-weight: 500;
-      font-size: 1rem;
-      border-right: 1px solid #d1d5db;
-    }
-    
-    .tab:last-child {
-      border-right: none;
-    }
-    
-    .tab.active {
-      background: #2d3748;
-      color: white;
-    }
-    
-    .tab:hover:not(.active) {
-      background: #f7fafc;
-    }
-    
-    .surah-list, .juz-list, .ruku-list, .pages-list, .manzil-list, .maqra-list {
+    .surah-grid, .juz-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
     }
     
-    .surah-card, .juz-card, .ruku-card, .page-card, .manzil-card, .maqra-card {
+    .surah-card, .juz-card {
+      display: block;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #333333;
+      transition: all 0.2s;
+    }
+    
+    .surah-card:hover, .juz-card:hover {
+      background: #ffffff;
+      border-color: #2c3e50;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .surah-header, .juz-header {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      padding: 2rem;
-      background: white;
-      border-radius: 12px;
-      text-decoration: none;
-      color: #2d3748;
-      transition: all 0.2s ease;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      gap: 1rem;
+      margin-bottom: 0.5rem;
     }
     
-    .surah-card:hover, .juz-card:hover, .ruku-card:hover, .page-card:hover, .manzil-card:hover, .maqra-card:hover {
-      border-color: #cbd5e0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transform: translateY(-1px);
-    }
-    
-    .surah-number, .juz-number, .ruku-number, .page-number, .manzil-number, .maqra-number {
+    .surah-number, .juz-number {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 60px;
-      height: 60px;
-      background: #2d3748;
+      width: 40px;
+      height: 40px;
+      background: #2c3e50;
       color: white;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: 600;
-      font-size: 1.1rem;
+      font-size: 1rem;
       flex-shrink: 0;
     }
     
-    .surah-info, .juz-info, .ruku-info, .page-info, .manzil-info, .maqra-info {
-      flex: 1;
-    }
-    
-    .surah-name, .juz-name, .ruku-name, .page-name, .manzil-name, .maqra-name {
+    .surah-name, .juz-name {
       font-weight: 600;
-      display: block;
-      margin-bottom: 0.5rem;
-      font-size: 1.2rem;
-      color: #1a202c;
+      font-size: 1.1rem;
+      color: #2c3e50;
     }
     
-    .surah-meta, .juz-meta, .ruku-meta, .page-meta, .manzil-meta, .maqra-meta {
-      font-size: 0.95rem;
-      color: #4a5568;
-    }
-    
-    .footer {
-      margin-top: 5rem;
-      padding: 3rem 0;
-      border-top: 1px solid #e2e8f0;
-      background: white;
-    }
-    
-    .footer-content {
-      text-align: center;
-    }
-    
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 3rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-    
-    .footer-link {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #4a5568;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      font-weight: 500;
-    }
-    
-    .footer-link:hover {
-      color: #2d3748;
-    }
-    
-    .license {
-      color: #718096;
+    .surah-meta, .juz-meta {
       font-size: 0.9rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-    
-    .icon {
-      font-size: 1.1em;
+      color: #6c757d;
     }
     
     .no-results {
       text-align: center;
-      padding: 4rem;
-      color: #4a5568;
-      background: white;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
+      padding: 3rem;
+      color: #6c757d;
     }
     
     .clear-btn {
-      background: #2d3748;
+      background: #2c3e50;
       color: white;
       border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
       cursor: pointer;
       margin-top: 1rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
+      transition: background 0.2s;
     }
     
     .clear-btn:hover {
-      background: #1a202c;
+      background: #1a252f;
     }
     
     .loading {
       text-align: center;
-      padding: 4rem;
-      color: #4a5568;
-      font-size: 1.1rem;
+      padding: 3rem;
+      color: #6c757d;
     }
     
     @media (max-width: 768px) {
@@ -672,7 +297,7 @@ interface QuranVerse {
         padding: 1rem;
       }
       
-      .surah-list, .juz-list, .ruku-list, .pages-list, .manzil-list, .maqra-list {
+      .surah-grid, .juz-grid {
         grid-template-columns: 1fr;
       }
       
@@ -680,12 +305,17 @@ interface QuranVerse {
         font-size: 2rem;
       }
       
-      .mode-tabs {
-        flex-direction: column;
+      .navigation-tabs {
+        width: 100%;
       }
       
-      .tab {
-        padding: 1rem;
+      .nav-tab {
+        flex: 1;
+        padding: 0.75rem;
+      }
+      
+      .search-input {
+        max-width: none;
       }
     }
   `]
