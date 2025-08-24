@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { LucideAngularModule, Bookmark, Search, List, Hash } from 'lucide-angular';
 
 interface Surah {
   chapter: number;
@@ -32,12 +33,15 @@ interface QuranVerse {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, LucideAngularModule],
   template: `
     <div class="container">
       <header class="header">
         <div class="header-nav">
-          <a routerLink="/bookmarks" class="bookmarks-link">📖 Bookmarks</a>
+          <a routerLink="/bookmarks" class="bookmarks-link">
+            <lucide-icon name="bookmark"></lucide-icon>
+            Bookmarks
+          </a>
         </div>
         <h1>القرآن الكريم</h1>
         <p class="subtitle">Al-Quran Digital</p>
@@ -48,12 +52,14 @@ interface QuranVerse {
           class="nav-tab" 
           [class.active]="currentMode === 'surah'"
           (click)="switchMode('surah')">
+          <lucide-icon name="list" size="18"></lucide-icon>
           Surah
         </button>
         <button 
           class="nav-tab" 
           [class.active]="currentMode === 'juz'"
           (click)="switchMode('juz')">
+          <lucide-icon name="hash" size="18"></lucide-icon>
           Juz
         </button>
       </div>
@@ -102,6 +108,21 @@ interface QuranVerse {
         <p>Surah tidak ditemukan</p>
         <button (click)="clearFilters()" class="clear-btn">Reset</button>
       </div>
+      
+      <footer class="footer">
+        <div class="footer-content">
+          <p class="credits">
+            <a href="https://github.com/fawazahmed0/quran-api" target="_blank" rel="noopener">API</a>
+            •
+            <a href="https://github.com/farkhanmaul" target="_blank" rel="noopener">farkhanmaul</a>
+            •
+            <strong><a href="https://claude.ai" target="_blank" rel="noopener">Claude</a></strong>
+          </p>
+          <p class="license">
+            <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a>
+          </p>
+        </div>
+      </footer>
     </div>
   `,
   styles: [`
@@ -127,6 +148,9 @@ interface QuranVerse {
     }
     
     .bookmarks-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       padding: 0.5rem 1rem;
       background: #f8f9fa;
       color: #495057;
@@ -167,6 +191,9 @@ interface QuranVerse {
     }
     
     .nav-tab {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       padding: 0.75rem 2rem;
       border: none;
       background: #ffffff;
@@ -290,6 +317,54 @@ interface QuranVerse {
       text-align: center;
       padding: 3rem;
       color: #6c757d;
+    }
+    
+    .footer {
+      margin-top: 4rem;
+      padding: 2rem 0;
+      border-top: 1px solid #e9ecef;
+      text-align: center;
+    }
+    
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .credits {
+      color: #6c757d;
+      font-size: 0.9rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    
+    .credits a {
+      color: #495057;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .credits a:hover {
+      color: #2c3e50;
+    }
+    
+    .license {
+      color: #868e96;
+      font-size: 0.8rem;
+      margin: 0;
+    }
+    
+    .license a {
+      color: inherit;
+      text-decoration: none;
+    }
+    
+    .license a:hover {
+      text-decoration: underline;
     }
     
     @media (max-width: 768px) {

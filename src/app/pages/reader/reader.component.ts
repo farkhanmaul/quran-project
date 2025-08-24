@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { OfflineService } from '../../services/offline.service';
+import { LucideAngularModule, ArrowLeft, ArrowRight, Play, Pause, Minus, Plus, Sun, Moon, Bookmark, BookmarkCheck } from 'lucide-angular';
 
 interface Verse {
   chapter: number;
@@ -38,23 +39,35 @@ interface TranslationResponse {
 @Component({
   selector: 'app-reader',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, LucideAngularModule],
   template: `
     <div class="container" [class.night-mode]="nightMode">
       <header class="header">
-        <button (click)="goBack()" class="back-btn">← Kembali</button>
+        <button (click)="goBack()" class="back-btn">
+          <lucide-icon name="arrow-left" size="18"></lucide-icon>
+          Kembali
+        </button>
         <h1 class="surah-title">{{ surahName || 'Surah ' + surahNumber }}</h1>
         <div class="header-controls">
-          <button (click)="toggleAudio()" class="audio-btn" [class.active]="isPlaying" [disabled]="!verses.length">
-            {{ isPlaying ? '⏸️' : '▶️' }}
+          <button (click)="toggleAudio()" class="control-btn audio-btn" [class.active]="isPlaying" [disabled]="!verses.length">
+            <lucide-icon [name]="isPlaying ? 'pause' : 'play'" size="16"></lucide-icon>
           </button>
-          <button (click)="decreaseFontSize()" class="font-btn">A-</button>
-          <button (click)="increaseFontSize()" class="font-btn">A+</button>
-          <button (click)="toggleNightMode()" class="mode-btn" [class.active]="nightMode">
-            {{ nightMode ? '☀️' : '🌙' }}
+          <button (click)="toggleNightMode()" class="control-btn mode-btn" [class.active]="nightMode">
+            <lucide-icon [name]="nightMode ? 'sun' : 'moon'" size="16"></lucide-icon>
           </button>
         </div>
       </header>
+      
+      <!-- Floating Font Controls -->
+      <div class="floating-font-controls">
+        <button (click)="decreaseFontSize()" class="font-control-btn" [disabled]="fontSize <= 12">
+          <lucide-icon name="minus" size="16"></lucide-icon>
+        </button>
+        <span class="font-size-display">{{ fontSize }}px</span>
+        <button (click)="increaseFontSize()" class="font-control-btn" [disabled]="fontSize >= 24">
+          <lucide-icon name="plus" size="16"></lucide-icon>
+        </button>
+      </div>
       
       <div *ngIf="loading" class="loading">Memuat surah...</div>
       
@@ -71,14 +84,14 @@ interface TranslationResponse {
               (click)="playVerse(verse.verse)" 
               class="play-verse-btn"
               title="Putar ayat ini">
-              {{ currentPlayingVerse === verse.verse && isPlaying ? '⏸️' : '▶️' }}
+              <lucide-icon [name]="currentPlayingVerse === verse.verse && isPlaying ? 'pause' : 'play'" size="14"></lucide-icon>
             </button>
             <button 
               (click)="toggleBookmark(verse)" 
               class="bookmark-btn"
               [class.active]="isBookmarked(verse)"
               title="Bookmark ayat ini">
-              {{ isBookmarked(verse) ? '🔖' : '📎' }}
+              <lucide-icon [name]="isBookmarked(verse) ? 'bookmark-check' : 'bookmark'" size="14"></lucide-icon>
             </button>
           </div>
           <div class="verse-text arabic" [style.font-size.px]="fontSize">
@@ -97,13 +110,15 @@ interface TranslationResponse {
           *ngIf="surahNumber > 1"
           (click)="previousSurah()" 
           class="nav-btn prev">
-          ← Surah Sebelumnya
+          <lucide-icon name="arrow-left" size="16"></lucide-icon>
+          Surah Sebelumnya
         </button>
         <button 
           *ngIf="surahNumber < 114"
           (click)="nextSurah()" 
           class="nav-btn next">
-          Surah Selanjutnya →
+          Surah Selanjutnya
+          <lucide-icon name="arrow-right" size="16"></lucide-icon>
         </button>
       </div>
       
@@ -144,6 +159,9 @@ interface TranslationResponse {
     }
     
     .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       background: #f8f9fa;
       color: #495057;
       border: 1px solid #dee2e6;
@@ -175,7 +193,10 @@ interface TranslationResponse {
       gap: 0.5rem;
     }
     
-    .font-btn, .mode-btn, .audio-btn {
+    .control-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: #f8f9fa;
       color: #495057;
       border: 1px solid #dee2e6;
@@ -184,22 +205,88 @@ interface TranslationResponse {
       border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s;
-      font-size: 0.9rem;
     }
     
-    .font-btn:hover, .mode-btn:hover, .audio-btn:hover {
+    .control-btn:hover {
       background: #e9ecef;
     }
     
-    .mode-btn.active, .audio-btn.active {
+    .control-btn.active {
       background: #2c3e50;
       color: white;
       border-color: #2c3e50;
     }
     
-    .audio-btn:disabled {
+    .control-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+    
+    .floating-font-controls {
+      position: fixed;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      background: white;
+      padding: 0.75rem;
+      border-radius: 12px;
+      border: 1px solid #dee2e6;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+    
+    .container.night-mode .floating-font-controls {
+      background: #2d3748;
+      border-color: #4a5568;
+    }
+    
+    .font-control-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      color: #495057;
+      border: 1px solid #dee2e6;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .font-control-btn:hover {
+      background: #e9ecef;
+    }
+    
+    .font-control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .container.night-mode .font-control-btn {
+      background: #4a5568;
+      color: #e2e8f0;
+      border-color: #718096;
+    }
+    
+    .container.night-mode .font-control-btn:hover {
+      background: #718096;
+    }
+    
+    .font-size-display {
+      color: #6c757d;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      min-width: 32px;
+    }
+    
+    .container.night-mode .font-size-display {
+      color: #a0aec0;
     }
     
     .loading, .error {
@@ -264,19 +351,25 @@ interface TranslationResponse {
     
     .bookmark-btn:hover, .bookmark-btn.active {
       opacity: 1;
+      background: rgba(0, 0, 0, 0.05);
     }
     
     .play-verse-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: none;
       border: none;
-      font-size: 1rem;
       cursor: pointer;
       opacity: 0.6;
       transition: opacity 0.2s;
+      padding: 0.25rem;
+      border-radius: 4px;
     }
     
     .play-verse-btn:hover {
       opacity: 1;
+      background: rgba(0, 0, 0, 0.05);
     }
     
     .verse.current-verse {
@@ -320,6 +413,9 @@ interface TranslationResponse {
     }
     
     .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       background: #f8f9fa;
       color: #495057;
       border: 1px solid #dee2e6;
@@ -372,6 +468,16 @@ interface TranslationResponse {
       
       .nav-btn.prev, .nav-btn.next {
         margin: 0;
+      }
+      
+      .floating-font-controls {
+        right: 0.5rem;
+        padding: 0.5rem;
+      }
+      
+      .font-control-btn {
+        width: 28px;
+        height: 28px;
       }
     }
   `]
