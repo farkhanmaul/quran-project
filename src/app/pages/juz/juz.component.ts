@@ -45,6 +45,14 @@ interface TranslationResponse {
         <button (click)="loadJuz()" class="retry-btn">Retry</button>
       </div>
       
+      <div class="floating-controls">
+        <div class="font-controls">
+          <button (click)="decreaseFontSize()" class="font-btn">A-</button>
+          <span class="font-size-indicator">{{ fontSize }}px</span>
+          <button (click)="increaseFontSize()" class="font-btn">A+</button>
+        </div>
+      </div>
+      
       <div *ngIf="verses.length > 0" class="verses-container">
         <div *ngFor="let verse of verses; let i = index" class="verse">
           <div class="verse-info">
@@ -59,9 +67,24 @@ interface TranslationResponse {
       
       <footer class="footer">
         <div class="footer-content">
-          <p>API by <a href="https://github.com/fawazahmed0/quran-api" target="_blank">fawazahmed0/quran-api</a></p>
-          <p>Built by <a href="https://github.com/farkhanmaul" target="_blank">farkhanmaul</a> with help from <a href="https://claude.ai" target="_blank">Claude</a></p>
-          <p>License: Public Domain</p>
+          <div class="footer-links">
+            <a href="https://github.com/fawazahmed0/quran-api" target="_blank" class="footer-link">
+              <span class="icon">🔗</span>
+              API
+            </a>
+            <a href="https://github.com/farkhanmaul" target="_blank" class="footer-link">
+              <span class="icon">👨‍💻</span>
+              farkhanmaul
+            </a>
+            <a href="https://claude.ai" target="_blank" class="footer-link">
+              <span class="icon">🤖</span>
+              <strong>Claude</strong>
+            </a>
+          </div>
+          <p class="license">
+            <span class="icon">📄</span>
+            License: MIT
+          </p>
         </div>
       </footer>
     </div>
@@ -98,21 +121,25 @@ interface TranslationResponse {
       letter-spacing: -0.5px;
     }
     
-    .controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .floating-controls {
+      position: fixed;
+      top: 50%;
+      right: 2rem;
+      transform: translateY(-50%);
+      z-index: 1000;
     }
     
     .font-controls {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 0.5rem;
       background: white;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
+      padding: 1rem 0.75rem;
+      border-radius: 12px;
       border: 1px solid #d1d5db;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
     }
     
     .font-btn {
@@ -135,10 +162,10 @@ interface TranslationResponse {
     
     .font-size-indicator {
       color: #4a5568;
-      font-size: 0.9rem;
-      min-width: 60px;
+      font-size: 0.8rem;
       text-align: center;
       font-weight: 500;
+      writing-mode: horizontal-tb;
     }
     
     .navigation {

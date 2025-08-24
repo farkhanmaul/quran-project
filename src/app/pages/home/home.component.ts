@@ -88,15 +88,15 @@ interface Surah {
           <div class="footer-links">
             <a href="https://github.com/fawazahmed0/quran-api" target="_blank" class="footer-link">
               <span class="icon">🔗</span>
-              API by fawazahmed0
+              API
             </a>
             <a href="https://github.com/farkhanmaul" target="_blank" class="footer-link">
               <span class="icon">👨‍💻</span>
-              Built by farkhanmaul
+              farkhanmaul
             </a>
             <a href="https://claude.ai" target="_blank" class="footer-link">
               <span class="icon">🤖</span>
-              AI Assistant
+              <strong>Claude</strong>
             </a>
           </div>
           <p class="license">

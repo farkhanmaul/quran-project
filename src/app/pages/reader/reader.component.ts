@@ -35,13 +35,6 @@ interface TranslationResponse {
           <button (click)="goBack()" class="back-btn">← Back</button>
           <h1>Surah {{ surahNumber }}</h1>
         </div>
-        <div class="controls">
-          <div class="font-controls">
-            <button (click)="decreaseFontSize()" class="font-btn">A-</button>
-            <span class="font-size-indicator">{{ fontSize }}px</span>
-            <button (click)="increaseFontSize()" class="font-btn">A+</button>
-          </div>
-        </div>
       </header>
       
       <div *ngIf="loading" class="loading">Loading surah...</div>
@@ -49,6 +42,14 @@ interface TranslationResponse {
       <div *ngIf="error" class="error">
         <p>{{ error }}</p>
         <button (click)="loadSurah()" class="retry-btn">Retry</button>
+      </div>
+      
+      <div class="floating-controls">
+        <div class="font-controls">
+          <button (click)="decreaseFontSize()" class="font-btn">A-</button>
+          <span class="font-size-indicator">{{ fontSize }}px</span>
+          <button (click)="increaseFontSize()" class="font-btn">A+</button>
+        </div>
       </div>
       
       <div *ngIf="verses && verses.length > 0 && !loading" class="surah-content">
@@ -82,15 +83,15 @@ interface TranslationResponse {
           <div class="footer-links">
             <a href="https://github.com/fawazahmed0/quran-api" target="_blank" class="footer-link">
               <span class="icon">🔗</span>
-              API by fawazahmed0
+              API
             </a>
             <a href="https://github.com/farkhanmaul" target="_blank" class="footer-link">
               <span class="icon">👨‍💻</span>
-              Built by farkhanmaul
+              farkhanmaul
             </a>
             <a href="https://claude.ai" target="_blank" class="footer-link">
               <span class="icon">🤖</span>
-              AI Assistant
+              <strong>Claude</strong>
             </a>
           </div>
           <p class="license">
@@ -124,21 +125,25 @@ interface TranslationResponse {
       margin-bottom: 1.5rem;
     }
     
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .floating-controls {
+      position: fixed;
+      top: 50%;
+      right: 2rem;
+      transform: translateY(-50%);
+      z-index: 1000;
     }
     
     .font-controls {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 0.5rem;
       background: white;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
+      padding: 1rem 0.75rem;
+      border-radius: 12px;
       border: 1px solid #d1d5db;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
     }
     
     .font-btn {
@@ -161,10 +166,10 @@ interface TranslationResponse {
     
     .font-size-indicator {
       color: #4a5568;
-      font-size: 0.9rem;
-      min-width: 60px;
+      font-size: 0.8rem;
       text-align: center;
       font-weight: 500;
+      writing-mode: horizontal-tb;
     }
     
     .back-btn {
