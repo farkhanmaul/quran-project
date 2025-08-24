@@ -273,17 +273,18 @@ Automatically deployed via GitHub Actions on every push to `main` branch.
 
 ## 🔮 Roadmap & Future Features
 
-### **Phase 1: API Integration**
-- [ ] Real Quran API integration
-- [ ] Audio recitation with multiple reciters
-- [ ] Prayer times API integration
-- [ ] Qibla direction with geolocation
+### **Phase 1: API Integration** ✅ COMPLETED
+- [x] Real Quran API integration (fawazahmed0/quran-api)
+- [x] Multiple navigation modes (Surah, Juz, Ruku, Pages, Manzil, Maqra)
+- [x] Advanced filtering by metadata (revelation place, verse count, Juz)
+- [x] Sajda verse marking with visual indicators
 
-### **Phase 2: Enhanced Features**
-- [ ] Bookmarking system with cloud sync
-- [ ] Reading progress tracking
-- [ ] Note-taking functionality
-- [ ] Advanced search with filters
+### **Phase 2: Enhanced Features** ✅ COMPLETED
+- [x] Bookmarking system with export/import
+- [x] Advanced search with content highlighting
+- [x] Diacritical marks toggle
+- [x] Night/Day reading modes with persistence
+- [x] Progressive Web App with offline support
 
 ### **Phase 3: Community Features**
 - [ ] User accounts and profiles
