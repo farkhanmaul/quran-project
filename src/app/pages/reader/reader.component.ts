@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -45,6 +45,9 @@ interface TranslationResponse {
         <button (click)="goBack()" class="back-btn">← Kembali</button>
         <h1 class="surah-title">{{ surahName || 'Surah ' + surahNumber }}</h1>
         <div class="header-controls">
+          <button (click)="toggleAudio()" class="audio-btn" [class.active]="isPlaying" [disabled]="!verses.length">
+            {{ isPlaying ? '⏸️' : '▶️' }}
+          </button>
           <button (click)="decreaseFontSize()" class="font-btn">A-</button>
           <button (click)="increaseFontSize()" class="font-btn">A+</button>
           <button (click)="toggleNightMode()" class="mode-btn" [class.active]="nightMode">
@@ -61,9 +64,15 @@ interface TranslationResponse {
       </div>
       
       <div *ngIf="verses && verses.length > 0 && !loading" class="verses">
-        <div *ngFor="let verse of verses; let i = index" class="verse">
+        <div *ngFor="let verse of verses; let i = index" class="verse" [class.current-verse]="currentPlayingVerse === verse.verse">
           <div class="verse-header">
             <span class="verse-number">{{ verse.verse }}</span>
+            <button 
+              (click)="playVerse(verse.verse)" 
+              class="play-verse-btn"
+              title="Putar ayat ini">
+              {{ currentPlayingVerse === verse.verse && isPlaying ? '⏸️' : '▶️' }}
+            </button>
             <button 
               (click)="toggleBookmark(verse)" 
               class="bookmark-btn"
@@ -80,6 +89,8 @@ interface TranslationResponse {
           </div>
         </div>
       </div>
+      
+      <audio #audioPlayer (ended)="onAudioEnded()" (timeupdate)="onTimeUpdate()" style="display: none;"></audio>
       
       <div *ngIf="verses && verses.length > 0 && !loading" class="navigation">
         <button 
@@ -164,7 +175,7 @@ interface TranslationResponse {
       gap: 0.5rem;
     }
     
-    .font-btn, .mode-btn {
+    .font-btn, .mode-btn, .audio-btn {
       background: #f8f9fa;
       color: #495057;
       border: 1px solid #dee2e6;
@@ -176,14 +187,19 @@ interface TranslationResponse {
       font-size: 0.9rem;
     }
     
-    .font-btn:hover, .mode-btn:hover {
+    .font-btn:hover, .mode-btn:hover, .audio-btn:hover {
       background: #e9ecef;
     }
     
-    .mode-btn.active {
+    .mode-btn.active, .audio-btn.active {
       background: #2c3e50;
       color: white;
       border-color: #2c3e50;
+    }
+    
+    .audio-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
     
     .loading, .error {
@@ -248,6 +264,29 @@ interface TranslationResponse {
     
     .bookmark-btn:hover, .bookmark-btn.active {
       opacity: 1;
+    }
+    
+    .play-verse-btn {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    
+    .play-verse-btn:hover {
+      opacity: 1;
+    }
+    
+    .verse.current-verse {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+    }
+    
+    .container.night-mode .verse.current-verse {
+      background: #1e3a8a;
+      border-left-color: #3b82f6;
     }
     
     .verse-text {
@@ -337,7 +376,8 @@ interface TranslationResponse {
     }
   `]
 })
-export class ReaderComponent implements OnInit {
+export class ReaderComponent implements OnInit, AfterViewInit {
+  @ViewChild('audioPlayer') audioPlayerRef!: ElementRef<HTMLAudioElement>;
   surahNumber: number = 1;
   surahName: string = '';
   verses: Verse[] = [];
@@ -350,6 +390,9 @@ export class ReaderComponent implements OnInit {
   bookmarkedVerses: BookmarkedVerse[] = [];
   isOnline = true;
   isDownloaded = false;
+  isPlaying = false;
+  currentPlayingVerse = 0;
+  audioPlayer?: HTMLAudioElement;
 
   private surahNames = [
     'Al-Fatiha', 'Al-Baqarah', 'Aal-E-Imran', 'An-Nisa', 'Al-Maidah', 'Al-Anam', 'Al-Araf', 'Al-Anfal', 'At-Tawbah', 'Yunus',
@@ -388,6 +431,10 @@ export class ReaderComponent implements OnInit {
       this.checkIfDownloaded();
       this.loadSurah();
     });
+  }
+
+  ngAfterViewInit() {
+    this.audioPlayer = this.audioPlayerRef.nativeElement;
   }
 
   loadSurah() {
@@ -566,5 +613,85 @@ export class ReaderComponent implements OnInit {
         console.log(`Surah ${this.surahNumber} downloaded for offline use`);
       }
     }
+  }
+
+  toggleAudio() {
+    if (this.isPlaying) {
+      this.pauseAudio();
+    } else {
+      this.playFullSurah();
+    }
+  }
+
+  playFullSurah() {
+    if (this.verses.length === 0) return;
+    this.currentPlayingVerse = 1;
+    this.playVerse(1);
+  }
+
+  playVerse(verseNumber: number) {
+    if (!this.audioPlayer) return;
+    
+    if (this.currentPlayingVerse === verseNumber && this.isPlaying) {
+      this.pauseAudio();
+      return;
+    }
+
+    this.currentPlayingVerse = verseNumber;
+    
+    // Using Mishary Rashid Al-Afasy recitation from everyayah.com
+    // Format: https://everyayah.com/data/Alafasy_128kbps/[chapter]_[verse].mp3
+    const paddedChapter = this.surahNumber.toString().padStart(3, '0');
+    const paddedVerse = verseNumber.toString().padStart(3, '0');
+    const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${paddedChapter}${paddedVerse}.mp3`;
+    
+    this.audioPlayer.src = audioUrl;
+    this.audioPlayer.play().then(() => {
+      this.isPlaying = true;
+    }).catch(error => {
+      console.error('Error playing audio:', error);
+      // Fallback to alternative source if everyayah fails
+      this.tryAlternativeAudioSource(verseNumber);
+    });
+  }
+
+  private tryAlternativeAudioSource(verseNumber: number) {
+    if (!this.audioPlayer) return;
+    
+    // Alternative source: https://cdn.islamic.network/quran/audio/128/ar.alafasy/
+    const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${this.surahNumber}/${verseNumber}.mp3`;
+    
+    this.audioPlayer.src = audioUrl;
+    this.audioPlayer.play().then(() => {
+      this.isPlaying = true;
+    }).catch(error => {
+      console.error('Both audio sources failed:', error);
+      this.isPlaying = false;
+    });
+  }
+
+  pauseAudio() {
+    if (this.audioPlayer) {
+      this.audioPlayer.pause();
+      this.isPlaying = false;
+    }
+  }
+
+  onAudioEnded() {
+    this.isPlaying = false;
+    
+    // Auto-play next verse
+    const nextVerse = this.currentPlayingVerse + 1;
+    if (nextVerse <= this.verses.length) {
+      setTimeout(() => {
+        this.playVerse(nextVerse);
+      }, 1000); // 1 second delay between verses
+    } else {
+      this.currentPlayingVerse = 0;
+    }
+  }
+
+  onTimeUpdate() {
+    // Optional: Can be used for progress tracking
   }
 }
