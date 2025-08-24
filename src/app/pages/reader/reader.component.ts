@@ -8,6 +8,7 @@ interface Verse {
   chapter: number;
   verse: number;
   text: string;
+  sajda?: boolean;
 }
 
 interface ApiResponse {
@@ -53,10 +54,13 @@ interface TranslationResponse {
       </div>
       
       <div *ngIf="verses && verses.length > 0 && !loading" class="surah-content">
-        <div *ngFor="let verse of verses; let i = index" class="verse">
+        <div *ngFor="let verse of verses; let i = index" class="verse" [class.sajda-verse]="verse.sajda">
           <div class="verse-number">{{ verse.verse }}</div>
           <div class="verse-content">
-            <div class="verse-text arabic" [style.font-size.px]="fontSize + 6">{{ verse.text }}</div>
+            <div class="verse-text arabic" [style.font-size.px]="fontSize + 6">
+              <span *ngIf="verse.sajda" class="sajda-indicator">🕌</span>
+              {{ verse.text }}
+            </div>
             <div *ngIf="translations[i]" class="verse-text indonesian" [style.font-size.px]="fontSize">{{ translations[i].text }}</div>
           </div>
         </div>
@@ -250,6 +254,18 @@ interface TranslationResponse {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     
+    .verse.sajda-verse {
+      border-left: 4px solid #2563eb;
+      background: linear-gradient(to right, #eff6ff, #ffffff);
+    }
+    
+    .sajda-indicator {
+      color: #2563eb;
+      font-size: 1.2em;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+    
     .verse-number {
       display: flex;
       align-items: center;
@@ -428,7 +444,10 @@ export class ReaderComponent implements OnInit {
       this.http.get<ApiResponse>(arabicUrl).toPromise(),
       this.http.get<TranslationResponse>(indonesianUrl).toPromise()
     ]).then(([arabicData, indonesianData]) => {
-      this.verses = arabicData?.chapter || [];
+      this.verses = (arabicData?.chapter || []).map(verse => ({
+        ...verse,
+        sajda: this.isSajdaVerse(verse.chapter, verse.verse)
+      }));
       this.translations = indonesianData?.chapter || [];
       this.loading = false;
     }).catch(err => {
@@ -436,6 +455,29 @@ export class ReaderComponent implements OnInit {
       this.loading = false;
       console.error('API Error:', err);
     });
+  }
+
+  private isSajdaVerse(chapter: number, verse: number): boolean {
+    // Known Sajda verses in the Quran (14 total)
+    const sajdaVerses = [
+      { chapter: 7, verse: 206 },
+      { chapter: 13, verse: 15 },
+      { chapter: 16, verse: 50 },
+      { chapter: 17, verse: 109 },
+      { chapter: 19, verse: 58 },
+      { chapter: 22, verse: 18 },
+      { chapter: 22, verse: 77 },
+      { chapter: 25, verse: 60 },
+      { chapter: 27, verse: 26 },
+      { chapter: 32, verse: 15 },
+      { chapter: 38, verse: 24 },
+      { chapter: 41, verse: 38 },
+      { chapter: 53, verse: 62 },
+      { chapter: 84, verse: 21 },
+      { chapter: 96, verse: 19 }
+    ];
+
+    return sajdaVerses.some(sajda => sajda.chapter === chapter && sajda.verse === verse);
   }
 
   goBack() {

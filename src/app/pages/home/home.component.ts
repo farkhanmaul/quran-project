@@ -11,6 +11,22 @@ interface Surah {
   verses: number;
 }
 
+interface SearchResult {
+  chapter: number;
+  verse: number;
+  surahName: string;
+  arabicText: string;
+  translationText: string;
+  highlightedArabic: string;
+  highlightedTranslation: string;
+}
+
+interface QuranVerse {
+  chapter: number;
+  verse: number;
+  text: string;
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -36,6 +52,30 @@ interface Surah {
             (click)="switchMode('juz')">
             By Juz
           </button>
+          <button 
+            class="tab" 
+            [class.active]="currentMode === 'ruku'"
+            (click)="switchMode('ruku')">
+            By Ruku
+          </button>
+          <button 
+            class="tab" 
+            [class.active]="currentMode === 'pages'"
+            (click)="switchMode('pages')">
+            By Pages
+          </button>
+          <button 
+            class="tab" 
+            [class.active]="currentMode === 'manzil'"
+            (click)="switchMode('manzil')">
+            By Manzil
+          </button>
+          <button 
+            class="tab" 
+            [class.active]="currentMode === 'maqra'"
+            (click)="switchMode('maqra')">
+            By Maqra
+          </button>
         </div>
       </div>
       
@@ -45,12 +85,20 @@ interface Surah {
             type="text" 
             [(ngModel)]="searchQuery" 
             (input)="filterSurahs()"
-            placeholder="Search surah..." 
+            placeholder="Search in Quran..." 
             class="search-input">
+        </div>
+        <div class="filter-options">
+          <button 
+            class="filter-btn"
+            [class.active]="showSearchMode"
+            (click)="toggleSearchMode()">
+            Search in Content
+          </button>
         </div>
       </div>
       
-      <div *ngIf="currentMode === 'surah'" class="surah-list">
+      <div *ngIf="currentMode === 'surah' && !showSearchMode" class="surah-list">
         <a 
           *ngFor="let surah of filteredSurahs" 
           [routerLink]="['/surah', surah.chapter]"
@@ -61,6 +109,20 @@ interface Surah {
             <span class="surah-meta">{{ surah.verses }} verses • Juz {{ surah.juz }}</span>
           </div>
         </a>
+      </div>
+      
+      <div *ngIf="showSearchMode && searchQuery.length > 2" class="search-results">
+        <div *ngIf="searchLoading" class="loading">Searching...</div>
+        <div *ngIf="searchResults.length > 0 && !searchLoading" class="search-list">
+          <div *ngFor="let result of searchResults" class="search-result-card">
+            <div class="result-reference">{{ result.surahName }} {{ result.chapter }}:{{ result.verse }}</div>
+            <div class="result-text arabic" [innerHTML]="result.highlightedArabic"></div>
+            <div class="result-text indonesian" [innerHTML]="result.highlightedTranslation"></div>
+          </div>
+        </div>
+        <div *ngIf="searchResults.length === 0 && !searchLoading && searchQuery.length > 2" class="no-search-results">
+          <p>No verses found for "{{ searchQuery }}"</p>
+        </div>
       </div>
       
       <div *ngIf="currentMode === 'juz'" class="juz-list">
@@ -76,9 +138,61 @@ interface Surah {
         </a>
       </div>
       
+      <div *ngIf="currentMode === 'ruku'" class="ruku-list">
+        <a 
+          *ngFor="let ruku of rukuList" 
+          [routerLink]="['/ruku', ruku]"
+          class="ruku-card">
+          <span class="ruku-number">{{ ruku }}</span>
+          <div class="ruku-info">
+            <span class="ruku-name">Ruku {{ ruku }}</span>
+            <span class="ruku-meta">{{ getRukuDescription(ruku) }}</span>
+          </div>
+        </a>
+      </div>
+      
+      <div *ngIf="currentMode === 'pages'" class="pages-list">
+        <a 
+          *ngFor="let page of pagesList" 
+          [routerLink]="['/page', page]"
+          class="page-card">
+          <span class="page-number">{{ page }}</span>
+          <div class="page-info">
+            <span class="page-name">Page {{ page }}</span>
+            <span class="page-meta">Mushaf Page</span>
+          </div>
+        </a>
+      </div>
+      
+      <div *ngIf="currentMode === 'manzil'" class="manzil-list">
+        <a 
+          *ngFor="let manzil of manzilList" 
+          [routerLink]="['/manzil', manzil]"
+          class="manzil-card">
+          <span class="manzil-number">{{ manzil }}</span>
+          <div class="manzil-info">
+            <span class="manzil-name">Manzil {{ manzil }}</span>
+            <span class="manzil-meta">{{ getManzilDescription(manzil) }}</span>
+          </div>
+        </a>
+      </div>
+      
+      <div *ngIf="currentMode === 'maqra'" class="maqra-list">
+        <a 
+          *ngFor="let maqra of maqraList" 
+          [routerLink]="['/maqra', maqra]"
+          class="maqra-card">
+          <span class="maqra-number">{{ maqra }}</span>
+          <div class="maqra-info">
+            <span class="maqra-name">Maqra {{ maqra }}</span>
+            <span class="maqra-meta">{{ getMaqraDescription(maqra) }}</span>
+          </div>
+        </a>
+      </div>
+      
       <div *ngIf="loading" class="loading">Loading...</div>
       
-      <div *ngIf="currentMode === 'surah' && filteredSurahs.length === 0 && !loading" class="no-results">
+      <div *ngIf="currentMode === 'surah' && filteredSurahs.length === 0 && !loading && !showSearchMode" class="no-results">
         <p>No surahs found</p>
         <button (click)="clearFilters()" class="clear-btn">Clear filters</button>
       </div>
@@ -172,6 +286,96 @@ interface Surah {
       color: #9ca3af;
     }
     
+    .filter-options {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    
+    .filter-btn {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+      color: #4a5568;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    
+    .filter-btn:hover {
+      border-color: #a0aec0;
+    }
+    
+    .filter-btn.active {
+      background: #2d3748;
+      color: white;
+      border-color: #2d3748;
+    }
+    
+    .search-results {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .search-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .search-result-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+    }
+    
+    .search-result-card:hover {
+      border-color: #cbd5e0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .result-reference {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .result-text {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    
+    .result-text.arabic {
+      direction: rtl;
+      text-align: right;
+      font-family: 'Amiri', 'Times New Roman', serif;
+      font-size: 1.2rem;
+      color: #1a202c;
+      margin-bottom: 1.5rem;
+    }
+    
+    .result-text.indonesian {
+      color: #4a5568;
+      font-style: italic;
+    }
+    
+    .no-search-results {
+      text-align: center;
+      padding: 4rem;
+      color: #4a5568;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+    
     .mode-tabs {
       display: flex;
       gap: 0;
@@ -209,13 +413,13 @@ interface Surah {
       background: #f7fafc;
     }
     
-    .surah-list, .juz-list {
+    .surah-list, .juz-list, .ruku-list, .pages-list, .manzil-list, .maqra-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 1.5rem;
     }
     
-    .surah-card, .juz-card {
+    .surah-card, .juz-card, .ruku-card, .page-card, .manzil-card, .maqra-card {
       display: flex;
       align-items: center;
       gap: 1.5rem;
@@ -229,13 +433,13 @@ interface Surah {
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
-    .surah-card:hover, .juz-card:hover {
+    .surah-card:hover, .juz-card:hover, .ruku-card:hover, .page-card:hover, .manzil-card:hover, .maqra-card:hover {
       border-color: #cbd5e0;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transform: translateY(-1px);
     }
     
-    .surah-number, .juz-number {
+    .surah-number, .juz-number, .ruku-number, .page-number, .manzil-number, .maqra-number {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -249,11 +453,11 @@ interface Surah {
       flex-shrink: 0;
     }
     
-    .surah-info, .juz-info {
+    .surah-info, .juz-info, .ruku-info, .page-info, .manzil-info, .maqra-info {
       flex: 1;
     }
     
-    .surah-name, .juz-name {
+    .surah-name, .juz-name, .ruku-name, .page-name, .manzil-name, .maqra-name {
       font-weight: 600;
       display: block;
       margin-bottom: 0.5rem;
@@ -261,7 +465,7 @@ interface Surah {
       color: #1a202c;
     }
     
-    .surah-meta, .juz-meta {
+    .surah-meta, .juz-meta, .ruku-meta, .page-meta, .manzil-meta, .maqra-meta {
       font-size: 0.95rem;
       color: #4a5568;
     }
@@ -350,7 +554,7 @@ interface Surah {
         padding: 1rem;
       }
       
-      .surah-list, .juz-list {
+      .surah-list, .juz-list, .ruku-list, .pages-list, .manzil-list, .maqra-list {
         grid-template-columns: 1fr;
       }
       
@@ -373,8 +577,17 @@ export class HomeComponent implements OnInit {
   filteredSurahs: Surah[] = [];
   loading = true;
   searchQuery = '';
+  showSearchMode = false;
+  searchLoading = false;
+  searchResults: SearchResult[] = [];
+  allVerses: QuranVerse[] = [];
+  allTranslations: QuranVerse[] = [];
   juzList = Array.from({length: 30}, (_, i) => i + 1);
-  currentMode: 'surah' | 'juz' = 'surah';
+  rukuList = Array.from({length: 556}, (_, i) => i + 1);  // Total 556 rukus in Quran
+  pagesList = Array.from({length: 604}, (_, i) => i + 1);  // 604 pages in standard Mushaf
+  manzilList = Array.from({length: 7}, (_, i) => i + 1);   // 7 manzils
+  maqraList = Array.from({length: 21}, (_, i) => i + 1);   // 21 maqras
+  currentMode: 'surah' | 'juz' | 'ruku' | 'pages' | 'manzil' | 'maqra' = 'surah';
 
   // Complete surah data with juz and verse count
   private surahData = [
@@ -498,6 +711,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.loadSurahs();
+    this.loadFullQuran();
   }
 
   loadSurahs() {
@@ -512,13 +726,17 @@ export class HomeComponent implements OnInit {
   }
 
   filterSurahs() {
-    this.filteredSurahs = this.surahs.filter(surah => {
-      const matchesSearch = !this.searchQuery || 
-        surah.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        surah.chapter.toString().includes(this.searchQuery);
-      
-      return matchesSearch;
-    });
+    if (this.showSearchMode) {
+      this.performContentSearch();
+    } else {
+      this.filteredSurahs = this.surahs.filter(surah => {
+        const matchesSearch = !this.searchQuery || 
+          surah.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          surah.chapter.toString().includes(this.searchQuery);
+        
+        return matchesSearch;
+      });
+    }
   }
 
   clearFilters() {
@@ -526,7 +744,7 @@ export class HomeComponent implements OnInit {
     this.filterSurahs();
   }
 
-  switchMode(mode: 'surah' | 'juz') {
+  switchMode(mode: 'surah' | 'juz' | 'ruku' | 'pages' | 'manzil' | 'maqra') {
     this.currentMode = mode;
     if (mode === 'surah') {
       this.clearFilters();
@@ -567,5 +785,101 @@ export class HomeComponent implements OnInit {
       30: 'An-Naba - An-Nas'
     };
     return juzDescriptions[juzNumber] || `Juz ${juzNumber}`;
+  }
+
+  getRukuDescription(rukuNumber: number): string {
+    // Sample descriptions for first few rukus
+    const rukuDescriptions: { [key: number]: string } = {
+      1: 'Opening verses of Al-Fatiha',
+      2: 'Beginning of Al-Baqarah',
+      3: 'Story of Adam',
+      4: 'Children of Israel',
+      5: 'Story of the Cow'
+    };
+    return rukuDescriptions[rukuNumber] || `Ruku section ${rukuNumber}`;
+  }
+
+  getManzilDescription(manzilNumber: number): string {
+    const manzilDescriptions: { [key: number]: string } = {
+      1: 'Al-Fatiha to An-Nisa (4:87)',
+      2: 'An-Nisa (4:88) to Al-Araf (7:87)', 
+      3: 'Al-Araf (7:88) to At-Tawbah (9:93)',
+      4: 'At-Tawbah (9:94) to An-Nahl (16:50)',
+      5: 'An-Nahl (16:51) to Al-Furqan (25:20)',
+      6: 'Al-Furqan (25:21) to Ya-Sin (36:27)',
+      7: 'Ya-Sin (36:28) to An-Nas (114:6)'
+    };
+    return manzilDescriptions[manzilNumber] || `Manzil ${manzilNumber}`;
+  }
+
+  getMaqraDescription(maqraNumber: number): string {
+    return `Traditional section ${maqraNumber} for systematic study`;
+  }
+
+  loadFullQuran() {
+    const arabicUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ara-quranacademy.json`;
+    const indonesianUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ind-indonesianislam.json`;
+    
+    Promise.all([
+      this.http.get<{ quran: QuranVerse[] }>(arabicUrl).toPromise(),
+      this.http.get<{ quran: QuranVerse[] }>(indonesianUrl).toPromise()
+    ]).then(([arabicData, indonesianData]) => {
+      this.allVerses = arabicData?.quran || [];
+      this.allTranslations = indonesianData?.quran || [];
+    }).catch(err => {
+      console.error('Failed to load full Quran for search:', err);
+    });
+  }
+
+  toggleSearchMode() {
+    this.showSearchMode = !this.showSearchMode;
+    this.searchResults = [];
+    if (!this.showSearchMode) {
+      this.searchQuery = '';
+      this.filterSurahs();
+    }
+  }
+
+  performContentSearch() {
+    if (this.searchQuery.length < 3) {
+      this.searchResults = [];
+      return;
+    }
+
+    this.searchLoading = true;
+    
+    // Search in both Arabic and Indonesian texts
+    const query = this.searchQuery.toLowerCase();
+    const results: SearchResult[] = [];
+
+    this.allVerses.forEach((verse, index) => {
+      const translation = this.allTranslations[index];
+      const arabicMatch = verse.text.toLowerCase().includes(query);
+      const translationMatch = translation && translation.text.toLowerCase().includes(query);
+      
+      if (arabicMatch || translationMatch) {
+        const surahName = this.surahData[verse.chapter - 1]?.name || `Surah ${verse.chapter}`;
+        
+        results.push({
+          chapter: verse.chapter,
+          verse: verse.verse,
+          surahName,
+          arabicText: verse.text,
+          translationText: translation?.text || '',
+          highlightedArabic: this.highlightText(verse.text, this.searchQuery),
+          highlightedTranslation: translation ? this.highlightText(translation.text, this.searchQuery) : ''
+        });
+      }
+    });
+
+    this.searchResults = results.slice(0, 50); // Limit results for performance
+    this.searchLoading = false;
+  }
+
+  private highlightText(text: string, query: string): string {
+    if (!query || query.length < 3) return text;
+    
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<mark style="background: #fef3c7; padding: 0.125rem 0.25rem; border-radius: 0.25rem;">$1</mark>');
   }
 }
