@@ -2,28 +2,23 @@
   "name": "Al-Quran Reader",
   "short_name": "Quran",
   "description": "Comprehensive Quran reading application with advanced navigation and offline support",
-  "start_url": "/",
+  "start_url": "/quran-project/",
   "display": "standalone",
   "background_color": "#fafafa",
   "theme_color": "#2d3748",
   "orientation": "portrait",
-  "scope": "/",
+  "scope": "/quran-project/",
   "lang": "en",
   "icons": [
     {
-      "src": "/assets/images/icon-192.png",
+      "src": "/quran-project/assets/images/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/assets/images/favicon.svg",
+      "src": "/quran-project/assets/images/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
-    },
-    {
-      "src": "/favicon.ico",
-      "sizes": "16x16 32x32",
-      "type": "image/x-icon"
     }
   ],
   "categories": ["education", "books", "reference"],
@@ -32,13 +27,13 @@
       "name": "Read Al-Fatiha",
       "short_name": "Al-Fatiha",
       "description": "Read the opening chapter",
-      "url": "/surah/1"
+      "url": "/quran-project/surah/1"
     },
     {
       "name": "My Bookmarks",
       "short_name": "Bookmarks", 
       "description": "Access saved verses",
-      "url": "/bookmarks"
+      "url": "/quran-project/bookmarks"
     }
   ]
 }
