@@ -1,11 +1,9 @@
-const CACHE_NAME = 'quran-app-v1';
+const CACHE_NAME = 'quran-app-v2';
+const BASE_PATH = '/quran-project';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/main.js',
-  '/polyfills.js',
-  '/runtime.js'
+  `${BASE_PATH}/`,
+  `${BASE_PATH}/index.html`,
+  `${BASE_PATH}/manifest.json`
 ];
 
 // Install event - cache resources
@@ -58,7 +56,7 @@ self.addEventListener('fetch', event => {
         }).catch(() => {
           // If offline and no cache, return offline page
           if (event.request.destination === 'document') {
-            return caches.match('/index.html');
+            return caches.match(`${BASE_PATH}/index.html`);
           }
         });
       })

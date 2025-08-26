@@ -77,6 +77,12 @@ interface TranslationResponse {
       </div>
       
       <div *ngIf="verses && verses.length > 0 && !loading" class="verses">
+        <!-- Bismillah (except for At-Tawbah) -->
+        <div *ngIf="surahNumber !== 9" class="bismillah-container">
+          <div class="bismillah-text">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+          <div class="bismillah-translation">Dengan nama Allah Yang Maha Pengasih, Maha Penyayang</div>
+        </div>
+        
         <div *ngFor="let verse of verses; let i = index" class="verse" [class.current-verse]="currentPlayingVerse === verse.verse">
           <div class="verse-header">
             <span class="verse-number">{{ verse.verse }}</span>
@@ -237,7 +243,7 @@ interface TranslationResponse {
       border: 1px solid #dee2e6;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       z-index: 1000;
-      width: fit-content;
+      width: 48px;
     }
     
     .container.night-mode .floating-font-controls {
@@ -417,6 +423,47 @@ interface TranslationResponse {
       font-weight: 400;
     }
     
+    .bismillah-container {
+      text-align: center;
+      margin: 2rem 0 3rem 0;
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(44, 62, 80, 0.05), rgba(52, 152, 219, 0.05));
+      border-radius: 12px;
+      border: 1px solid rgba(44, 62, 80, 0.1);
+    }
+    
+    .container.night-mode .bismillah-container {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(142, 202, 230, 0.05));
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .bismillah-text {
+      font-family: 'Amiri', 'Noto Sans Arabic', 'Times New Roman', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #2c3e50;
+      text-align: center;
+      direction: rtl;
+      line-height: 1.8;
+      margin-bottom: 0.5rem;
+    }
+    
+    .container.night-mode .bismillah-text {
+      color: #e2e8f0;
+    }
+    
+    .bismillah-translation {
+      font-size: 0.9rem;
+      color: #6c757d;
+      font-style: italic;
+      text-align: center;
+      line-height: 1.4;
+    }
+    
+    .container.night-mode .bismillah-translation {
+      color: #a0aec0;
+    }
+    
     .navigation {
       display: flex;
       justify-content: space-between;
@@ -503,7 +550,7 @@ interface TranslationResponse {
         border-radius: 12px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         gap: 0.5rem;
-        width: fit-content;
+        width: 56px;
       }
       
       .font-control-btn {
