@@ -20,6 +20,9 @@ out/
 .nuxt/
 .vuepress/dist
 
+# Angular cache
+.angular/
+
 # Environment variables
 .env
 .env.local
