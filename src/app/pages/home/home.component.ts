@@ -374,23 +374,118 @@ interface QuranVerse {
       
       .surah-grid, .juz-grid {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
       }
       
       .header h1 {
         font-size: 2rem;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+      
+      .header {
+        margin-bottom: 2rem;
+      }
+      
+      .bookmarks-link {
+        padding: 0.75rem 1.25rem;
+        font-size: 1rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
       }
       
       .navigation-tabs {
         width: 100%;
+        margin-bottom: 1.5rem;
       }
       
       .nav-tab {
         flex: 1;
-        padding: 0.75rem;
+        padding: 1rem;
+        font-size: 1rem;
+        min-height: 48px;
+        gap: 0.75rem;
+      }
+      
+      .nav-tab lucide-icon {
+        width: 20px;
+        height: 20px;
       }
       
       .search-input {
         max-width: none;
+        padding: 1rem;
+        font-size: 16px;
+        min-height: 48px;
+        border-radius: 12px;
+      }
+      
+      .search-section {
+        margin-bottom: 1.5rem;
+      }
+      
+      .surah-card, .juz-card {
+        padding: 1.25rem;
+        border-radius: 12px;
+        min-height: 80px;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      
+      .surah-card:active, .juz-card:active {
+        transform: scale(0.98);
+      }
+      
+      .surah-number, .juz-number {
+        width: 48px;
+        height: 48px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+      }
+      
+      .surah-name, .juz-name {
+        font-size: 1.2rem;
+        line-height: 1.3;
+      }
+      
+      .surah-meta, .juz-meta {
+        font-size: 1rem;
+        margin-top: 0.5rem;
+      }
+      
+      .clear-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        min-height: 44px;
+        border-radius: 8px;
+      }
+      
+      .footer {
+        margin-top: 3rem;
+        padding: 1.5rem 0;
+      }
+      
+      .credits {
+        font-size: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .credits a {
+        padding: 0.5rem;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+      
+      .license {
+        font-size: 0.9rem;
+      }
+      
+      .license a {
+        padding: 0.5rem;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
       }
     }
   `]

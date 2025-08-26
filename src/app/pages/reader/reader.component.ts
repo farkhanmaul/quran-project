@@ -445,39 +445,165 @@ interface TranslationResponse {
       }
       
       .header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
         gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+      
+      .back-btn {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        min-height: 44px;
+        border-radius: 8px;
       }
       
       .header-controls {
-        align-self: flex-end;
+        gap: 0.75rem;
+        margin-left: auto;
+      }
+      
+      .control-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+      
+      .control-btn lucide-icon {
+        width: 18px;
+        height: 18px;
       }
       
       .surah-title {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
+        flex: 1;
+        text-align: center;
+      }
+      
+      .floating-font-controls {
+        right: 1rem;
+        bottom: 1rem;
+        padding: 0.75rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        gap: 0.75rem;
+      }
+      
+      .font-control-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+      
+      .font-control-btn lucide-icon {
+        width: 18px;
+        height: 18px;
+      }
+      
+      .font-size-display {
+        font-size: 0.9rem;
+        font-weight: 600;
+        min-width: 45px;
+      }
+      
+      .verse {
+        padding: 1.5rem 0;
+        margin: 0 -0.5rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        border-radius: 8px;
+      }
+      
+      .verse-header {
+        margin-bottom: 1rem;
+        gap: 0.75rem;
+      }
+      
+      .verse-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+      }
+      
+      .play-verse-btn, .bookmark-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+      
+      .play-verse-btn lucide-icon, .bookmark-btn lucide-icon {
+        width: 16px;
+        height: 16px;
       }
       
       .verse-text {
-        font-size: 1.1rem;
+        font-size: 1.25rem;
+        line-height: 2;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: 8px;
+      }
+      
+      .container.night-mode .verse-text {
+        background: rgba(52, 58, 64, 0.3);
+      }
+      
+      .verse-translation {
+        font-size: 1rem;
+        line-height: 1.8;
+        padding: 0.75rem 1rem;
+        background: rgba(233, 236, 239, 0.5);
+        border-radius: 6px;
+      }
+      
+      .container.night-mode .verse-translation {
+        background: rgba(73, 80, 87, 0.3);
       }
       
       .navigation {
         flex-direction: column;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+      
+      .nav-btn {
+        padding: 1rem;
+        font-size: 1rem;
+        min-height: 52px;
+        border-radius: 8px;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        gap: 0.75rem;
       }
       
       .nav-btn.prev, .nav-btn.next {
         margin: 0;
       }
       
-      .floating-font-controls {
-        right: 0.5rem;
-        padding: 0.5rem;
+      .nav-btn lucide-icon {
+        width: 18px;
+        height: 18px;
       }
       
-      .font-control-btn {
-        width: 28px;
-        height: 28px;
+      .loading, .error {
+        padding: 2rem 1rem;
+        text-align: center;
+        font-size: 1rem;
+      }
+      
+      .retry-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        min-height: 44px;
+        border-radius: 8px;
+        margin-top: 1rem;
       }
     }
   `]
