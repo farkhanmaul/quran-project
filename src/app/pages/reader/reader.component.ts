@@ -60,11 +60,11 @@ interface TranslationResponse {
       
       <!-- Floating Font Controls -->
       <div class="floating-font-controls">
-        <button (click)="decreaseFontSize()" class="font-control-btn" [disabled]="fontSize <= 12">
+        <button (click)="decreaseFontSize()" class="font-control-btn" [disabled]="fontSize <= minFontSize">
           <lucide-icon name="minus" size="16"></lucide-icon>
         </button>
         <span class="font-size-display">{{ fontSize }}px</span>
-        <button (click)="increaseFontSize()" class="font-control-btn" [disabled]="fontSize >= 24">
+        <button (click)="increaseFontSize()" class="font-control-btn" [disabled]="fontSize >= maxFontSize">
           <lucide-icon name="plus" size="16"></lucide-icon>
         </button>
       </div>
@@ -97,7 +97,7 @@ interface TranslationResponse {
           <div class="verse-text arabic" [style.font-size.px]="fontSize">
             {{ verse.text }}
           </div>
-          <div *ngIf="translations[i]" class="verse-translation" [style.font-size.px]="fontSize - 2">
+          <div *ngIf="translations[i]" class="verse-translation" [style.font-size.px]="fontSize - 4">
             {{ translations[i].text }}
           </div>
         </div>
@@ -232,11 +232,12 @@ interface TranslationResponse {
       align-items: center;
       gap: 0.5rem;
       background: white;
-      padding: 0.75rem;
+      padding: 0.5rem;
       border-radius: 12px;
       border: 1px solid #dee2e6;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       z-index: 1000;
+      width: fit-content;
     }
     
     .container.night-mode .floating-font-controls {
@@ -251,11 +252,12 @@ interface TranslationResponse {
       background: #f8f9fa;
       color: #495057;
       border: 1px solid #dee2e6;
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s;
+      font-size: 0;
     }
     
     .font-control-btn:hover {
@@ -279,10 +281,12 @@ interface TranslationResponse {
     
     .font-size-display {
       color: #6c757d;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 600;
       text-align: center;
-      min-width: 32px;
+      min-width: 36px;
+      padding: 0.25rem;
+      line-height: 1;
     }
     
     .container.night-mode .font-size-display {
@@ -405,6 +409,14 @@ interface TranslationResponse {
       color: #adb5bd;
     }
     
+    .arabic {
+      font-family: 'Amiri', 'Noto Sans Arabic', 'Times New Roman', serif;
+      text-align: right;
+      direction: rtl;
+      line-height: 2.2;
+      font-weight: 400;
+    }
+    
     .navigation {
       display: flex;
       justify-content: space-between;
@@ -485,28 +497,33 @@ interface TranslationResponse {
       .floating-font-controls {
         right: 1rem;
         bottom: 1rem;
-        padding: 0.75rem;
+        top: auto;
+        transform: none;
+        padding: 0.5rem;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        gap: 0.75rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        gap: 0.5rem;
+        width: fit-content;
       }
       
       .font-control-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        font-size: 1rem;
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        font-size: 0;
       }
       
       .font-control-btn lucide-icon {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
       }
       
       .font-size-display {
         font-size: 0.9rem;
         font-weight: 600;
-        min-width: 45px;
+        min-width: 44px;
+        padding: 0.25rem;
+        line-height: 1.2;
       }
       
       .verse {
@@ -542,12 +559,13 @@ interface TranslationResponse {
       }
       
       .verse-text {
-        font-size: 1.25rem;
-        line-height: 2;
+        line-height: 2.2;
         margin-bottom: 1rem;
         padding: 1rem;
         background: rgba(248, 249, 250, 0.8);
         border-radius: 8px;
+        text-align: right;
+        direction: rtl;
       }
       
       .container.night-mode .verse-text {
@@ -555,11 +573,12 @@ interface TranslationResponse {
       }
       
       .verse-translation {
-        font-size: 1rem;
         line-height: 1.8;
         padding: 0.75rem 1rem;
         background: rgba(233, 236, 239, 0.5);
         border-radius: 6px;
+        text-align: left;
+        direction: ltr;
       }
       
       .container.night-mode .verse-translation {
@@ -616,7 +635,9 @@ export class ReaderComponent implements OnInit, AfterViewInit {
   translations: TranslationVerse[] = [];
   loading = false;
   error = '';
-  fontSize = 16;
+  fontSize = 18;
+  minFontSize = 14;
+  maxFontSize = 36;
   showDiacritics = true;
   nightMode = false;
   bookmarkedVerses: BookmarkedVerse[] = [];
@@ -738,14 +759,14 @@ export class ReaderComponent implements OnInit, AfterViewInit {
   }
   
   increaseFontSize() {
-    if (this.fontSize < 24) {
+    if (this.fontSize < this.maxFontSize) {
       this.fontSize += 2;
       this.saveUserPreferences();
     }
   }
 
   decreaseFontSize() {
-    if (this.fontSize > 12) {
+    if (this.fontSize > this.minFontSize) {
       this.fontSize -= 2;
       this.saveUserPreferences();
     }
@@ -794,7 +815,7 @@ export class ReaderComponent implements OnInit, AfterViewInit {
     const preferences = localStorage.getItem('quran-preferences');
     if (preferences) {
       const prefs = JSON.parse(preferences);
-      this.fontSize = prefs.fontSize || 16;
+      this.fontSize = prefs.fontSize || 18;
       this.showDiacritics = prefs.showDiacritics !== undefined ? prefs.showDiacritics : true;
       this.nightMode = prefs.nightMode || false;
     }
