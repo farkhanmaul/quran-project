@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { OfflineService } from '../../services/offline.service';
-import { LucideAngularModule, ArrowLeft, ArrowRight, Play, Pause, Minus, Plus, Sun, Moon, Bookmark, BookmarkCheck, Languages, Type } from 'lucide-angular';
+import { LucideAngularModule, ArrowLeft, ArrowRight, Play, Pause, Minus, Plus, Sun, Moon, Bookmark, BookmarkCheck, Globe, AlignLeft } from 'lucide-angular';
 
 interface Verse {
   chapter: number;
@@ -62,11 +62,11 @@ interface TransliterationResponse {
           <button (click)="toggleAudio()" class="control-btn audio-btn" [class.active]="isPlaying" [disabled]="!verses.length">
             <lucide-icon [name]="isPlaying ? 'pause' : 'play'" size="16"></lucide-icon>
           </button>
-          <button (click)="toggleTranslation()" class="control-btn translation-btn" [class.active]="showMultipleTranslations">
-            <lucide-icon name="languages" size="16"></lucide-icon>
+          <button (click)="toggleTranslation()" class="control-btn translation-btn" [class.active]="showMultipleTranslations" title="Toggle English Translation">
+            <lucide-icon name="globe" size="16"></lucide-icon>
           </button>
-          <button (click)="toggleTransliteration()" class="control-btn transliteration-btn" [class.active]="showTransliteration">
-            <lucide-icon name="type" size="16"></lucide-icon>
+          <button (click)="toggleTransliteration()" class="control-btn transliteration-btn" [class.active]="showTransliteration" title="Toggle Transliteration">
+            <lucide-icon name="align-left" size="16"></lucide-icon>
           </button>
           <button (click)="toggleNightMode()" class="control-btn mode-btn" [class.active]="nightMode">
             <lucide-icon [name]="nightMode ? 'sun' : 'moon'" size="16"></lucide-icon>
@@ -997,32 +997,56 @@ export class ReaderComponent implements OnInit, AfterViewInit {
   }
 
   loadSurah() {
+    this.resetLoadingState();
+    
+    const apiUrls = this.getApiUrls();
+    const requests = apiUrls.map(url => this.http.get(url).toPromise());
+    
+    Promise.all(requests)
+      .then(this.handleApiResponse.bind(this))
+      .catch(this.handleApiError.bind(this));
+  }
+  
+  private resetLoadingState() {
     this.loading = true;
     this.error = '';
     this.verses = [];
     this.translations = [];
-
-    // Choose Arabic edition based on diacritics preference
+    this.englishTranslations = [];
+    this.transliterations = [];
+  }
+  
+  private getApiUrls() {
+    const baseUrl = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions';
     const arabicEdition = this.showDiacritics ? 'ara-quranacademy' : 'ara-quranacademytanzil';
-    const arabicUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/${arabicEdition}/${this.surahNumber}.json`;
-    const indonesianUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ind-indonesianislam/${this.surahNumber}.json`;
     
-    // Load both Arabic and Indonesian
-    Promise.all([
-      this.http.get<ApiResponse>(arabicUrl).toPromise(),
-      this.http.get<TranslationResponse>(indonesianUrl).toPromise()
-    ]).then(([arabicData, indonesianData]) => {
-      this.verses = (arabicData?.chapter || []).map(verse => ({
-        ...verse,
-        sajda: this.isSajdaVerse(verse.chapter, verse.verse)
-      }));
-      this.translations = indonesianData?.chapter || [];
-      this.loading = false;
-    }).catch(err => {
-      this.error = 'Failed to load surah. Please try again.';
-      this.loading = false;
-      console.error('API Error:', err);
-    });
+    return [
+      `${baseUrl}/${arabicEdition}/${this.surahNumber}.json`,
+      `${baseUrl}/ind-indonesianislam/${this.surahNumber}.json`,
+      `${baseUrl}/eng-sahih/${this.surahNumber}.json`,
+      `${baseUrl}/ara-quranacademytanzeelrt/${this.surahNumber}.json`
+    ];
+  }
+  
+  private handleApiResponse([arabicData, indonesianData, englishData, transliterationData]: any[]) {
+    this.verses = this.processVerses(arabicData?.chapter || []);
+    this.translations = indonesianData?.chapter || [];
+    this.englishTranslations = englishData?.chapter || [];
+    this.transliterations = transliterationData?.chapter || [];
+    this.loading = false;
+  }
+  
+  private processVerses(verses: Verse[]): Verse[] {
+    return verses.map(verse => ({
+      ...verse,
+      sajda: this.isSajdaVerse(verse.chapter, verse.verse)
+    }));
+  }
+  
+  private handleApiError(err: any) {
+    this.error = 'Failed to load surah. Please try again.';
+    this.loading = false;
+    console.error('API Error:', err);
   }
 
   private isSajdaVerse(chapter: number, verse: number): boolean {
@@ -1085,17 +1109,19 @@ export class ReaderComponent implements OnInit, AfterViewInit {
   }
 
   toggleNightMode() {
-    this.nightMode = !this.nightMode;
-    this.saveUserPreferences();
+    this.toggleFeature('nightMode');
   }
   
   toggleTranslation() {
-    this.showMultipleTranslations = !this.showMultipleTranslations;
-    this.saveUserPreferences();
+    this.toggleFeature('showMultipleTranslations');
   }
   
   toggleTransliteration() {
-    this.showTransliteration = !this.showTransliteration;
+    this.toggleFeature('showTransliteration');
+  }
+  
+  private toggleFeature(feature: string) {
+    (this as any)[feature] = !(this as any)[feature];
     this.saveUserPreferences();
   }
 

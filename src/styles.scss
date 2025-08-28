@@ -128,10 +128,13 @@ body {
   margin-bottom: 1rem;
 }
 
-.loading-text {
+.loading-text, .loading-subtext {
   color: #6c757d;
-  font-size: 1rem;
   margin-bottom: 0.5rem;
+}
+
+.loading-text {
+  font-size: 1rem;
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -159,11 +162,11 @@ body {
   height: 1rem;
   margin-bottom: 0.75rem;
   border-radius: 4px;
+  
+  &.short { width: 60%; }
+  &.medium { width: 80%; }
+  &.long { width: 100%; }
 }
-
-.skeleton-line.short { width: 60%; }
-.skeleton-line.medium { width: 80%; }
-.skeleton-line.long { width: 100%; }
 
 .fade-in {
   animation: fadeInUp 0.5s ease-out;

@@ -791,39 +791,53 @@ export class HomeComponent implements OnInit {
   }
 
   loadSurahs() {
-    this.surahs = this.surahData.map((data, index) => ({
-      chapter: index + 1,
-      name: data.name,
-      juz: data.juz,
-      verses: data.verses,
-      revelationPlace: data.revelationPlace,
-      category: data.category
-    }));
+    this.surahs = this.surahData.map(this.mapSurahData);
     this.filteredSurahs = [...this.surahs];
     this.loading = false;
   }
+  
+  private mapSurahData = (data: any, index: number): Surah => ({
+    chapter: index + 1,
+    name: data.name,
+    juz: data.juz,
+    verses: data.verses,
+    revelationPlace: data.revelationPlace,
+    category: data.category,
+    meaning: data.meaning,
+    theme: data.theme
+  });
 
   filterSurahs() {
     if (this.showSearchMode) {
       this.performContentSearch();
     } else {
-      this.filteredSurahs = this.surahs.filter(surah => {
-        const matchesSearch = !this.searchQuery || 
-          surah.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          surah.chapter.toString().includes(this.searchQuery);
-        
-        const matchesRevelationPlace = !this.selectedRevelationPlace || 
-          surah.revelationPlace === this.selectedRevelationPlace;
-        
-        const matchesCategory = !this.selectedCategory || 
-          surah.category === this.selectedCategory;
-        
-        const matchesJuz = !this.selectedJuz || 
-          surah.juz === +this.selectedJuz;
-        
-        return matchesSearch && matchesRevelationPlace && matchesCategory && matchesJuz;
-      });
+      this.filteredSurahs = this.surahs.filter(this.surahMatchesFilters.bind(this));
     }
+  }
+  
+  private surahMatchesFilters(surah: Surah): boolean {
+    return this.matchesSearch(surah) && 
+           this.matchesRevelationPlace(surah) && 
+           this.matchesCategory(surah) && 
+           this.matchesJuz(surah);
+  }
+  
+  private matchesSearch(surah: Surah): boolean {
+    return !this.searchQuery || 
+           surah.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+           surah.chapter.toString().includes(this.searchQuery);
+  }
+  
+  private matchesRevelationPlace(surah: Surah): boolean {
+    return !this.selectedRevelationPlace || surah.revelationPlace === this.selectedRevelationPlace;
+  }
+  
+  private matchesCategory(surah: Surah): boolean {
+    return !this.selectedCategory || surah.category === this.selectedCategory;
+  }
+  
+  private matchesJuz(surah: Surah): boolean {
+    return !this.selectedJuz || surah.juz === +this.selectedJuz;
   }
 
   clearFilters() {
