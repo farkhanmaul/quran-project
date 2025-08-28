@@ -12,6 +12,8 @@ interface Surah {
   verses: number;
   revelationPlace?: 'mecca' | 'medina';
   category?: 'short' | 'medium' | 'long';
+  meaning?: string;
+  theme?: string;
 }
 
 interface SearchResult {
@@ -84,6 +86,16 @@ interface QuranVerse {
           </div>
           <div class="surah-meta">
             {{ surah.verses }} ayat • Juz {{ surah.juz }}
+            <span *ngIf="surah.revelationPlace" class="revelation-place" [class.mecca]="surah.revelationPlace === 'mecca'" [class.medina]="surah.revelationPlace === 'medina'">
+              {{ surah.revelationPlace === 'mecca' ? 'Makkiyah' : 'Madaniyah' }}
+            </span>
+          </div>
+          <div *ngIf="surah.meaning" class="surah-meaning">
+            <span class="meaning-label">Arti:</span> {{ surah.meaning }}
+          </div>
+          <div *ngIf="surah.theme" class="surah-theme tooltip">
+            <span class="theme-indicator">💡</span>
+            <span class="tooltiptext">{{ surah.theme }}</span>
           </div>
         </a>
       </div>
@@ -102,7 +114,19 @@ interface QuranVerse {
         </a>
       </div>
       
-      <div *ngIf="loading" class="loading">Memuat...</div>
+      <div *ngIf="loading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Memuat Al-Quran</div>
+        <div class="loading-subtext">Mohon tunggu sebentar...</div>
+      </div>
+      
+      <div *ngIf="loading" class="skeleton-loading">
+        <div *ngFor="let item of [1,2,3,4,5,6]" class="skeleton-card">
+          <div class="skeleton-line short skeleton-loader"></div>
+          <div class="skeleton-line medium skeleton-loader"></div>
+          <div class="skeleton-line long skeleton-loader"></div>
+        </div>
+      </div>
       
       <div *ngIf="currentMode === 'surah' && filteredSurahs.length === 0 && !loading" class="no-results">
         <p>Surah tidak ditemukan</p>
@@ -290,6 +314,57 @@ interface QuranVerse {
     .surah-meta, .juz-meta {
       font-size: 0.9rem;
       color: #6c757d;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .revelation-place {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+    
+    .revelation-place.mecca {
+      background: rgba(156, 39, 176, 0.1);
+      color: #9c27b0;
+    }
+    
+    .revelation-place.medina {
+      background: rgba(76, 175, 80, 0.1);
+      color: #4caf50;
+    }
+    
+    .surah-meaning {
+      font-size: 0.85rem;
+      color: #495057;
+      margin-top: 0.3rem;
+      font-style: italic;
+    }
+    
+    .meaning-label {
+      font-weight: 600;
+      color: #6c757d;
+      font-style: normal;
+    }
+    
+    .surah-theme {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      opacity: 0.7;
+    }
+    
+    .theme-indicator {
+      font-size: 1.2rem;
+      cursor: help;
+    }
+    
+    .surah-card {
+      position: relative;
     }
     
     .no-results {
@@ -313,10 +388,17 @@ interface QuranVerse {
       background: #1a252f;
     }
     
-    .loading {
+    .loading-container {
       text-align: center;
       padding: 3rem;
       color: #6c757d;
+    }
+    
+    .skeleton-loading {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
     
     .footer {
@@ -583,28 +665,28 @@ export class HomeComponent implements OnInit {
   maqraList = Array.from({length: 21}, (_, i) => i + 1);   // 21 maqras
   currentMode: 'surah' | 'juz' | 'ruku' | 'pages' | 'manzil' | 'maqra' = 'surah';
 
-  // Complete surah data with juz, verse count, revelation place, and category
+  // Complete surah data with juz, verse count, revelation place, category, meanings and themes
   private surahData = [
-    { name: 'Al-Fatiha', juz: 1, verses: 7, revelationPlace: 'mecca' as const, category: 'short' as const },
-    { name: 'Al-Baqarah', juz: 1, verses: 286, revelationPlace: 'medina' as const, category: 'long' as const },
-    { name: 'Aal-E-Imran', juz: 3, verses: 200, revelationPlace: 'medina' as const, category: 'long' as const },
-    { name: 'An-Nisa', juz: 4, verses: 176, revelationPlace: 'medina' as const, category: 'long' as const },
-    { name: 'Al-Maidah', juz: 6, verses: 120, revelationPlace: 'medina' as const, category: 'long' as const },
-    { name: 'Al-Anam', juz: 7, verses: 165, revelationPlace: 'mecca' as const, category: 'long' as const },
-    { name: 'Al-Araf', juz: 8, verses: 206, revelationPlace: 'mecca' as const, category: 'long' as const },
-    { name: 'Al-Anfal', juz: 9, verses: 75, revelationPlace: 'medina' as const, category: 'medium' as const },
-    { name: 'At-Tawbah', juz: 10, verses: 129, revelationPlace: 'medina' as const, category: 'long' as const },
-    { name: 'Yunus', juz: 11, verses: 109, revelationPlace: 'mecca' as const, category: 'long' as const },
-    { name: 'Hud', juz: 11, verses: 123, revelationPlace: 'mecca' as const, category: 'long' as const },
-    { name: 'Yusuf', juz: 12, verses: 111, revelationPlace: 'mecca' as const, category: 'long' as const },
-    { name: 'Ar-Rad', juz: 13, verses: 43, revelationPlace: 'medina' as const, category: 'medium' as const },
-    { name: 'Ibrahim', juz: 13, verses: 52, revelationPlace: 'mecca' as const, category: 'medium' as const },
-    { name: 'Al-Hijr', juz: 14, verses: 99, revelationPlace: 'mecca' as const, category: 'medium' as const },
-    { name: 'An-Nahl', juz: 14, verses: 128, revelationPlace: 'mecca' as const, category: 'long' as const },
-    { name: 'Al-Isra', juz: 15, verses: 111, revelationPlace: 'mecca' as const, category: 'long' as const },
-    { name: 'Al-Kahf', juz: 15, verses: 110, revelationPlace: 'mecca' as const, category: 'long' as const },
-    { name: 'Maryam', juz: 16, verses: 98, revelationPlace: 'mecca' as const, category: 'medium' as const },
-    { name: 'Ta-Ha', juz: 16, verses: 135, revelationPlace: 'mecca' as const, category: 'long' as const },
+    { name: 'Al-Fatiha', juz: 1, verses: 7, revelationPlace: 'mecca' as const, category: 'short' as const, meaning: 'Pembuka', theme: 'Doa pembuka, pujian kepada Allah, dan permohonan petunjuk' },
+    { name: 'Al-Baqarah', juz: 1, verses: 286, revelationPlace: 'medina' as const, category: 'long' as const, meaning: 'Sapi Betina', theme: 'Kisah Bani Israil, hukum-hukum syariat, dan tuntunan hidup beriman' },
+    { name: 'Aal-E-Imran', juz: 3, verses: 200, revelationPlace: 'medina' as const, category: 'long' as const, meaning: 'Keluarga Imran', theme: 'Kisah Maryam dan Isa, persatuan umat beriman, dan keteguhan iman' },
+    { name: 'An-Nisa', juz: 4, verses: 176, revelationPlace: 'medina' as const, category: 'long' as const, meaning: 'Wanita', theme: 'Hak-hak wanita, hukum keluarga, keadilan sosial, dan perlindungan kaum lemah' },
+    { name: 'Al-Maidah', juz: 6, verses: 120, revelationPlace: 'medina' as const, category: 'long' as const, meaning: 'Hidangan', theme: 'Penyempurnaan agama, hukum halal-haram, dan kontrak sosial' },
+    { name: 'Al-Anam', juz: 7, verses: 165, revelationPlace: 'mecca' as const, category: 'long' as const, meaning: 'Binatang Ternak', theme: 'Tauhid, kritik terhadap penyembahan berhala, dan tanda-tanda kekuasaan Allah' },
+    { name: 'Al-Araf', juz: 8, verses: 206, revelationPlace: 'mecca' as const, category: 'long' as const, meaning: 'Tempat Tinggi', theme: 'Kisah para nabi, peringatan untuk umat terdahulu, dan konsekuensi keingkaran' },
+    { name: 'Al-Anfal', juz: 9, verses: 75, revelationPlace: 'medina' as const, category: 'medium' as const, meaning: 'Harta Rampasan Perang', theme: 'Perang Badr, strategi perang, dan pembagian harta rampasan' },
+    { name: 'At-Tawbah', juz: 10, verses: 129, revelationPlace: 'medina' as const, category: 'long' as const, meaning: 'Taubat', theme: 'Taubat, perang Tabuk, kritik terhadap orang munafik, dan loyalitas kepada Islam' },
+    { name: 'Yunus', juz: 11, verses: 109, revelationPlace: 'mecca' as const, category: 'long' as const, meaning: 'Yunus', theme: 'Kisah Nabi Yunus, rahmat Allah, dan pentingnya kesabaran dalam dakwah' },
+    { name: 'Hud', juz: 11, verses: 123, revelationPlace: 'mecca' as const, category: 'long' as const, meaning: 'Hud', theme: 'Kisah Nabi Hud dan kaum Ad, peringatan bagi yang sombong dan ingkar' },
+    { name: 'Yusuf', juz: 12, verses: 111, revelationPlace: 'mecca' as const, category: 'long' as const, meaning: 'Yusuf', theme: 'Kisah lengkap Nabi Yusuf, kesabaran, kesetiaan, dan hikmah kehidupan' },
+    { name: 'Ar-Rad', juz: 13, verses: 43, revelationPlace: 'medina' as const, category: 'medium' as const, meaning: 'Guruh', theme: 'Keagungan Allah dalam alam, takdir, dan balasan atas amal perbuatan' },
+    { name: 'Ibrahim', juz: 13, verses: 52, revelationPlace: 'mecca' as const, category: 'medium' as const, meaning: 'Ibrahim', theme: 'Doa Nabi Ibrahim, dakwah tauhid, dan pembangunan Ka\'bah' },
+    { name: 'Al-Hijr', juz: 14, verses: 99, revelationPlace: 'mecca' as const, category: 'medium' as const, meaning: 'Al-Hijr', theme: 'Azab untuk kaum Nabi Saleh, perlindungan Al-Quran, dan kemuliaan manusia' },
+    { name: 'An-Nahl', juz: 14, verses: 128, revelationPlace: 'mecca' as const, category: 'long' as const, meaning: 'Lebah', theme: 'Nikmat Allah, lebah sebagai simbol kerja keras, dan syukur atas rezeki' },
+    { name: 'Al-Isra', juz: 15, verses: 111, revelationPlace: 'mecca' as const, category: 'long' as const, meaning: 'Perjalanan Malam', theme: 'Isra Mi\'raj, akhlak mulia, dan tanggung jawab sosial' },
+    { name: 'Al-Kahf', juz: 15, verses: 110, revelationPlace: 'mecca' as const, category: 'long' as const, meaning: 'Gua', theme: 'Ashabul Kahfi, Nabi Khidr, Dzulqarnain - kisah tentang iman dan kebijaksanaan' },
+    { name: 'Maryam', juz: 16, verses: 98, revelationPlace: 'mecca' as const, category: 'medium' as const, meaning: 'Maryam', theme: 'Kisah Maryam dan kelahiran Isa, kemuliaan wanita salehah' },
+    { name: 'Ta-Ha', juz: 16, verses: 135, revelationPlace: 'mecca' as const, category: 'long' as const, meaning: 'Ta Ha', theme: 'Panggilan Allah kepada Nabi Musa, misi kenabian, dan perjuangan melawan kezaliman' },
     { name: 'Al-Anbiya', juz: 17, verses: 112, revelationPlace: 'mecca' as const, category: 'long' as const },
     { name: 'Al-Hajj', juz: 17, verses: 78, revelationPlace: 'medina' as const, category: 'medium' as const },
     { name: 'Al-Mumenoon', juz: 18, verses: 118, revelationPlace: 'mecca' as const, category: 'long' as const },

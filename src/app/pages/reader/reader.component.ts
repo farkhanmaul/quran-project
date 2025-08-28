@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { OfflineService } from '../../services/offline.service';
-import { LucideAngularModule, ArrowLeft, ArrowRight, Play, Pause, Minus, Plus, Sun, Moon, Bookmark, BookmarkCheck } from 'lucide-angular';
+import { LucideAngularModule, ArrowLeft, ArrowRight, Play, Pause, Minus, Plus, Sun, Moon, Bookmark, BookmarkCheck, Languages, Type } from 'lucide-angular';
 
 interface Verse {
   chapter: number;
@@ -36,6 +36,16 @@ interface TranslationResponse {
   chapter: TranslationVerse[];
 }
 
+interface TransliterationVerse {
+  chapter: number;
+  verse: number;
+  text: string;
+}
+
+interface TransliterationResponse {
+  chapter: TransliterationVerse[];
+}
+
 @Component({
   selector: 'app-reader',
   standalone: true,
@@ -51,6 +61,12 @@ interface TranslationResponse {
         <div class="header-controls">
           <button (click)="toggleAudio()" class="control-btn audio-btn" [class.active]="isPlaying" [disabled]="!verses.length">
             <lucide-icon [name]="isPlaying ? 'pause' : 'play'" size="16"></lucide-icon>
+          </button>
+          <button (click)="toggleTranslation()" class="control-btn translation-btn" [class.active]="showMultipleTranslations">
+            <lucide-icon name="languages" size="16"></lucide-icon>
+          </button>
+          <button (click)="toggleTransliteration()" class="control-btn transliteration-btn" [class.active]="showTransliteration">
+            <lucide-icon name="type" size="16"></lucide-icon>
           </button>
           <button (click)="toggleNightMode()" class="control-btn mode-btn" [class.active]="nightMode">
             <lucide-icon [name]="nightMode ? 'sun' : 'moon'" size="16"></lucide-icon>
@@ -69,7 +85,25 @@ interface TranslationResponse {
         </button>
       </div>
       
-      <div *ngIf="loading" class="loading">Memuat surah...</div>
+      <div *ngIf="loading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Memuat {{ surahName || 'Surah ' + surahNumber }}</div>
+        <div class="loading-subtext">Sedang mengambil ayat dan terjemahan...</div>
+      </div>
+      
+      <div *ngIf="loading" class="skeleton-loading">
+        <div *ngFor="let item of [1,2,3,4,5]" class="skeleton-verse">
+          <div class="skeleton-header">
+            <div class="skeleton-circle skeleton-loader"></div>
+            <div class="skeleton-controls">
+              <div class="skeleton-btn skeleton-loader"></div>
+              <div class="skeleton-btn skeleton-loader"></div>
+            </div>
+          </div>
+          <div class="skeleton-arabic skeleton-loader"></div>
+          <div class="skeleton-translation skeleton-loader"></div>
+        </div>
+      </div>
       
       <div *ngIf="error" class="error">
         <p>{{ error }}</p>
@@ -103,8 +137,14 @@ interface TranslationResponse {
           <div class="verse-text arabic" [style.font-size.px]="fontSize">
             {{ verse.text }}
           </div>
+          <div *ngIf="showTransliteration && transliterations[i]" class="verse-transliteration" [style.font-size.px]="fontSize - 2">
+            {{ transliterations[i].text }}
+          </div>
           <div *ngIf="translations[i]" class="verse-translation" [style.font-size.px]="fontSize - 4">
             {{ translations[i].text }}
+          </div>
+          <div *ngIf="showMultipleTranslations && englishTranslations[i]" class="verse-translation-en" [style.font-size.px]="fontSize - 4">
+            <span class="translation-label">EN:</span> {{ englishTranslations[i].text }}
           </div>
         </div>
       </div>
@@ -299,7 +339,59 @@ interface TranslationResponse {
       color: #a0aec0;
     }
     
-    .loading, .error {
+    .loading-container {
+      text-align: center;
+      padding: 3rem;
+      color: #6c757d;
+      font-size: 1.1rem;
+    }
+    
+    .skeleton-loading {
+      margin-bottom: 2rem;
+    }
+    
+    .skeleton-verse {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .skeleton-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .skeleton-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+    
+    .skeleton-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .skeleton-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+    }
+    
+    .skeleton-arabic {
+      height: 2.5rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+    }
+    
+    .skeleton-translation {
+      height: 1.5rem;
+      width: 85%;
+      border-radius: 4px;
+    }
+    
+    .error {
       text-align: center;
       padding: 3rem;
       color: #6c757d;
@@ -413,6 +505,48 @@ interface TranslationResponse {
     
     .container.night-mode .verse-translation {
       color: #adb5bd;
+    }
+    
+    .verse-transliteration {
+      color: #495057;
+      line-height: 1.6;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed #dee2e6;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    
+    .container.night-mode .verse-transliteration {
+      color: #ced4da;
+      border-bottom-color: #495057;
+    }
+    
+    .verse-translation-en {
+      color: #6c757d;
+      line-height: 1.7;
+      font-style: italic;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #e9ecef;
+      font-size: 0.9rem;
+    }
+    
+    .container.night-mode .verse-translation-en {
+      color: #adb5bd;
+      border-top-color: #495057;
+    }
+    
+    .translation-label {
+      font-weight: 600;
+      color: #495057;
+      font-style: normal;
+      font-size: 0.8rem;
+      margin-right: 0.5rem;
+    }
+    
+    .container.night-mode .translation-label {
+      color: #ced4da;
     }
     
     .arabic {
@@ -638,15 +772,17 @@ interface TranslationResponse {
       }
       
       .header-controls {
-        gap: 0.75rem;
+        gap: 0.5rem;
         margin-left: auto;
+        flex-wrap: wrap;
       }
       
       .control-btn {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         border-radius: 8px;
         font-size: 1rem;
+        flex-shrink: 0;
       }
       
       .control-btn lucide-icon {
@@ -799,6 +935,8 @@ export class ReaderComponent implements OnInit, AfterViewInit {
   surahName: string = '';
   verses: Verse[] = [];
   translations: TranslationVerse[] = [];
+  englishTranslations: TranslationVerse[] = [];
+  transliterations: TransliterationVerse[] = [];
   loading = false;
   error = '';
   fontSize = 18;
@@ -806,6 +944,8 @@ export class ReaderComponent implements OnInit, AfterViewInit {
   maxFontSize = 36;
   showDiacritics = true;
   nightMode = false;
+  showMultipleTranslations = false;
+  showTransliteration = false;
   bookmarkedVerses: BookmarkedVerse[] = [];
   isOnline = true;
   isDownloaded = false;
@@ -948,6 +1088,16 @@ export class ReaderComponent implements OnInit, AfterViewInit {
     this.nightMode = !this.nightMode;
     this.saveUserPreferences();
   }
+  
+  toggleTranslation() {
+    this.showMultipleTranslations = !this.showMultipleTranslations;
+    this.saveUserPreferences();
+  }
+  
+  toggleTransliteration() {
+    this.showTransliteration = !this.showTransliteration;
+    this.saveUserPreferences();
+  }
 
   toggleBookmark(verse: Verse) {
     const existingIndex = this.bookmarkedVerses.findIndex(
@@ -984,6 +1134,8 @@ export class ReaderComponent implements OnInit, AfterViewInit {
       this.fontSize = prefs.fontSize || 18;
       this.showDiacritics = prefs.showDiacritics !== undefined ? prefs.showDiacritics : true;
       this.nightMode = prefs.nightMode || false;
+      this.showMultipleTranslations = prefs.showMultipleTranslations || false;
+      this.showTransliteration = prefs.showTransliteration || false;
     }
   }
 
@@ -991,7 +1143,9 @@ export class ReaderComponent implements OnInit, AfterViewInit {
     const preferences = {
       fontSize: this.fontSize,
       showDiacritics: this.showDiacritics,
-      nightMode: this.nightMode
+      nightMode: this.nightMode,
+      showMultipleTranslations: this.showMultipleTranslations,
+      showTransliteration: this.showTransliteration
     };
     localStorage.setItem('quran-preferences', JSON.stringify(preferences));
   }
