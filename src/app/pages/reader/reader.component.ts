@@ -174,9 +174,9 @@ interface TransliterationResponse {
     .container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 1.5rem;
       min-height: 100vh;
-      background: #ffffff;
+      background: #fafafa;
       color: #333333;
       transition: all 0.3s ease;
       line-height: 1.6;
@@ -418,8 +418,12 @@ interface TransliterationResponse {
     }
     
     .verse {
-      padding: 1.5rem 0;
-      border-bottom: 1px solid #e9ecef;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
     }
     
     .verse-header {
@@ -475,8 +479,10 @@ interface TransliterationResponse {
     }
     
     .verse.current-verse {
-      background: #e3f2fd;
-      border-left: 4px solid #2196f3;
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      border: 2px solid #667eea;
+      transform: scale(1.01);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
     }
     
     .container.night-mode .verse.current-verse {
@@ -487,10 +493,14 @@ interface TransliterationResponse {
     .verse-text {
       direction: rtl;
       text-align: right;
-      font-family: 'Amiri', serif;
-      line-height: 2;
+      font-family: 'Amiri', 'Noto Sans Arabic', serif;
+      line-height: 2.2;
       margin-bottom: 1rem;
-      color: #2c3e50;
+      color: #1a202c;
+      padding: 1rem 1.25rem;
+      background: #fafbfc;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
     }
     
     .container.night-mode .verse-text {
@@ -498,9 +508,14 @@ interface TransliterationResponse {
     }
     
     .verse-translation {
-      color: #6c757d;
-      line-height: 1.8;
+      color: #475569;
+      line-height: 1.9;
       font-style: italic;
+      padding: 0.875rem 1.25rem;
+      background: #f1f5f9;
+      border-radius: 10px;
+      margin-top: 0.75rem;
+      border-left: 3px solid #cbd5e1;
     }
     
     .container.night-mode .verse-translation {
@@ -634,13 +649,17 @@ interface TransliterationResponse {
     
     @media (max-width: 480px) {
       .container {
-        padding: 0.75rem;
+        padding: 1rem;
+        background: #f8fafc;
       }
       
       .header {
         gap: 0.75rem;
-        margin-bottom: 1.25rem;
+        margin-bottom: 1.5rem;
         flex-wrap: nowrap;
+        padding: 1rem 1.25rem;
+        border-radius: 20px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
       }
       
       .back-btn {
@@ -671,18 +690,23 @@ interface TransliterationResponse {
       }
       
       .floating-font-controls {
-        right: 0.75rem;
-        bottom: 0.75rem;
-        width: 52px;
-        padding: 0.4rem;
-        border-radius: 10px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        right: 1rem;
+        bottom: 1rem;
+        width: 56px;
+        padding: 0.5rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        background: #ffffff;
+        backdrop-filter: blur(10px);
       }
       
       .font-control-btn {
-        width: 42px;
-        height: 42px;
-        border-radius: 8px;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: #f8fafc;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       }
       
       .font-size-display {
@@ -691,11 +715,11 @@ interface TransliterationResponse {
       }
       
       .verse {
-        padding: 1.25rem 0;
-        margin: 0 -0.25rem;
-        padding-left: 0.25rem;
-        padding-right: 0.25rem;
-        border-radius: 6px;
+        padding: 1.5rem 1.25rem;
+        margin-bottom: 1.5rem;
+        border-radius: 20px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+        background: #ffffff;
       }
       
       .verse-number {
@@ -712,14 +736,23 @@ interface TransliterationResponse {
       }
       
       .verse-text {
-        padding: 0.875rem;
-        border-radius: 6px;
-        margin-bottom: 0.875rem;
+        padding: 1.25rem 1.5rem;
+        border-radius: 16px;
+        margin-bottom: 1rem;
+        background: #fafbfc;
+        border-left: 4px solid #667eea;
+        font-size: 1.1rem;
+        line-height: 2.4;
       }
       
       .verse-translation {
-        padding: 0.625rem 0.875rem;
-        border-radius: 4px;
+        padding: 1rem 1.25rem;
+        border-radius: 14px;
+        background: #f1f5f9;
+        border-left: 3px solid #cbd5e1;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        line-height: 1.8;
       }
       
       .navigation {
@@ -728,22 +761,32 @@ interface TransliterationResponse {
       }
       
       .nav-btn {
-        padding: 0.875rem;
-        min-height: 48px;
-        border-radius: 6px;
-        font-size: 0.95rem;
-        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        min-height: 52px;
+        border-radius: 16px;
+        font-size: 1rem;
+        gap: 0.75rem;
+        background: #ffffff;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        font-weight: 600;
+        color: #475569;
+        border: none;
       }
       
       .bismillah-container {
-        margin: 1.5rem 0 2.5rem 0;
-        padding: 1.5rem;
-        border-radius: 10px;
+        margin: 2rem 0 3rem 0;
+        padding: 2rem 1.5rem;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #667eea08 0%, #764ba208 100%);
+        border: 2px solid rgba(102, 126, 234, 0.15);
+        box-shadow: 0 4px 24px rgba(102, 126, 234, 0.1);
       }
       
       .bismillah-text {
-        font-size: 1.6rem;
-        margin-bottom: 0.4rem;
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        color: #1a202c;
       }
       
       .bismillah-translation {
