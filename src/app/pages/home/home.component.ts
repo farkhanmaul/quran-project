@@ -367,6 +367,70 @@ interface QuranVerse {
       text-decoration: underline;
     }
     
+    @media (max-width: 480px) {
+      .container {
+        padding: 0.75rem;
+      }
+      
+      .header {
+        margin-bottom: 1.5rem;
+      }
+      
+      .header h1 {
+        font-size: 1.75rem;
+        margin: 1rem 0 0.5rem 0;
+      }
+      
+      .header-nav {
+        position: static;
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+      
+      .bookmarks-link {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem;
+        font-size: 1rem;
+        min-height: 48px;
+        border-radius: 12px;
+      }
+      
+      .nav-tab {
+        padding: 0.875rem;
+        font-size: 0.95rem;
+        min-height: 46px;
+      }
+      
+      .search-input {
+        padding: 0.875rem 1rem;
+        font-size: 16px;
+        min-height: 46px;
+        border-radius: 10px;
+      }
+      
+      .surah-card, .juz-card {
+        padding: 1rem;
+        border-radius: 10px;
+        min-height: 76px;
+      }
+      
+      .surah-number, .juz-number {
+        width: 44px;
+        height: 44px;
+        font-size: 1rem;
+        border-radius: 6px;
+      }
+      
+      .surah-name, .juz-name {
+        font-size: 1.1rem;
+      }
+      
+      .surah-meta, .juz-meta {
+        font-size: 0.9rem;
+      }
+    }
+    
     @media (max-width: 768px) {
       .container {
         padding: 1rem;
@@ -384,6 +448,14 @@ interface QuranVerse {
       
       .header {
         margin-bottom: 2rem;
+        position: relative;
+      }
+      
+      .header-nav {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: auto;
       }
       
       .bookmarks-link {
@@ -392,6 +464,7 @@ interface QuranVerse {
         min-height: 44px;
         display: flex;
         align-items: center;
+        border-radius: 8px;
       }
       
       .navigation-tabs {

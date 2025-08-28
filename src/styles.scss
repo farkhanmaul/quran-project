@@ -39,10 +39,28 @@ a {
 }
 
 /* Simple responsive utilities */
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+  
+  .container {
+    padding: 0.75rem !important;
+  }
+}
+
 @media (max-width: 768px) {
   html {
     font-size: 14px;
   }
+}
+
+/* Safe area insets for modern mobile devices */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Loading animation */

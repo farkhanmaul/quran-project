@@ -498,6 +498,125 @@ interface TranslationResponse {
       margin-left: auto;
     }
     
+    @media (max-width: 480px) {
+      .container {
+        padding: 0.75rem;
+      }
+      
+      .header {
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+        flex-wrap: nowrap;
+      }
+      
+      .back-btn {
+        padding: 0.625rem 0.875rem;
+        font-size: 0.9rem;
+        min-height: 42px;
+        border-radius: 6px;
+      }
+      
+      .header-controls {
+        gap: 0.5rem;
+      }
+      
+      .control-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 6px;
+      }
+      
+      .surah-title {
+        font-size: 1.2rem;
+        text-align: center;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .floating-font-controls {
+        right: 0.75rem;
+        bottom: 0.75rem;
+        width: 52px;
+        padding: 0.4rem;
+        border-radius: 10px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      }
+      
+      .font-control-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+      }
+      
+      .font-size-display {
+        font-size: 0.85rem;
+        min-width: 42px;
+      }
+      
+      .verse {
+        padding: 1.25rem 0;
+        margin: 0 -0.25rem;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+        border-radius: 6px;
+      }
+      
+      .verse-number {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        border-radius: 6px;
+      }
+      
+      .play-verse-btn, .bookmark-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
+      }
+      
+      .verse-text {
+        padding: 0.875rem;
+        border-radius: 6px;
+        margin-bottom: 0.875rem;
+      }
+      
+      .verse-translation {
+        padding: 0.625rem 0.875rem;
+        border-radius: 4px;
+      }
+      
+      .navigation {
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+      
+      .nav-btn {
+        padding: 0.875rem;
+        min-height: 48px;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        gap: 0.5rem;
+      }
+      
+      .bismillah-container {
+        margin: 1.5rem 0 2.5rem 0;
+        padding: 1.5rem;
+        border-radius: 10px;
+      }
+      
+      .bismillah-text {
+        font-size: 1.6rem;
+        margin-bottom: 0.4rem;
+      }
+      
+      .bismillah-translation {
+        font-size: 0.85rem;
+      }
+    }
+    
     @media (max-width: 768px) {
       .container {
         padding: 1rem;
